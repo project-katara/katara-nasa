@@ -1,0 +1,70 @@
+{
+  "name": "worldwindjs",
+  "version": "1.6.90",
+  "description": "WorldWindJS is an interactive 3D globe library featuring imagery, maps, terrain and 2D projections from the Web WorldWind virtual globe SDK from NASA and ESA plus several community contributions.",
+  "main": "build/dist/worldwind.min.js",
+  "homepage": "https://emxsys.github.io/worldwindjs/",
+  "bugs": {
+    "url": "https://github.com/emxsys/worldwindjs/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "NASA",
+  "contributors": [
+    "NASA Project Manager <patrick.hogan@nasa.gov>",
+    "ESA Consortium Contact <yann.voumard@solenix.ch>",
+    "Bruce Schubert <bruce@emxsys.com"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/emxsys/worldwindjs.git"
+  },
+  "scripts": {
+    "build": "grunt",
+    "clean": "grunt clean",
+    "doc": "grunt jsdoc",
+    "test": "grunt karma",
+    "test:watch": "karma start karma.conf.js"
+  },
+  "files": [
+    "build/dist/images/",
+    "build/dist/worldwind.js",
+    "build/dist/worldwind.min.js"
+  ],
+  "devDependencies": {
+    "grunt": "^1.0.3",
+    "grunt-contrib-clean": "^2.0.0",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-requirejs": "^1.0.0",
+    "grunt-jsdoc": "^2.3.0",
+    "grunt-karma": "^3.0.0",
+    "grunt-zip": "^0.18.1",
+    "jasmine-core": "^3.2.1",
+    "karma": "^3.0.0",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-htmlfile-reporter": "^0.3.7",
+    "karma-jasmine": "^1.1.2",
+    "karma-junit-reporter": "^1.2.0",
+    "karma-phantomjs-launcher": "^1.0.4",
+    "karma-requirejs": "^1.1.0",
+    "recursive-readdir": "^2.2.2"
+  },
+  "keywords": [
+    "sdk",
+    "worldwind",
+    "3d",
+    "globe",
+    "earth",
+    "terrain",
+    "imagery",
+    "nasa",
+    "esa",
+    "geospatial",
+    "html5",
+    "javascript",
+    "webgl",
+    "browser"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}
