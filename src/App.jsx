@@ -13,6 +13,7 @@ import "./App.css";
 export default function App() {
   const [status, setStatus] = useState(true);
   const [step, setStep] = useState(0);
+  const popup = document.querySelector(".popup-component");
 
   const layers = ["usgs-topo", "stars"];
 
@@ -23,6 +24,18 @@ export default function App() {
   useEffect(() => {
     if (step === 2) {
       setStatus(false);
+    }
+
+    if (step === 2) {
+      popup.classList.add("popup--one");
+    } else if (step === 3) {
+      popup.classList.add("popup--two");
+    } else if (step === 4) {
+      popup.classList.add("popup--three");
+    } else if (step === 5) {
+      popup.classList.add("popup--final");
+    } else if (step > 5) {
+      popup.classList.add("popup--disabled");
     }
   }, [step]);
 
@@ -99,7 +112,61 @@ export default function App() {
       )}
       <div className="wrapper">
         <div className="container">
+          <div className="popup-component">
+            <div className="popup-component__wrapper">
+              <div className="popup-component__wrapper__container">
+                <div className="popup-number-wrapper">
+                  <div className="popup-number-wrapper__container">
+                    <h3 className="popup-number">{step - 1}</h3>
+                  </div>
+                </div>
+                <div className="popup-header">
+                  {step === 2 && (
+                    <>
+                      <h3 className="popup-title">Explore Earth</h3>
+                      <p className="popup-description">
+                        Interact with this 3D Globe model!{" "}
+                      </p>
+                    </>
+                  )}
+                  {step === 3 && (
+                    <>
+                      <h3 className="popup-title">Teste</h3>
+                      <p className="popup-description">
+                        Interact with this 3D Globe model!{" "}
+                      </p>
+                    </>
+                  )}
+                  {step === 4 && (
+                    <>
+                      <h3 className="popup-title">Teste 2</h3>
+                      <p className="popup-description">
+                        Interact with this 3D Globe model!{" "}
+                      </p>
+                    </>
+                  )}
+                </div>
+                <div className="popup-button-wrapper">
+                  {step === 5 ? (
+                    <button
+                      className="popup-button-wrapper__item"
+                      onClick={() => handleNextStep()}>
+                      Finish tutorial 4 / 4
+                    </button>
+                  ) : (
+                    <button
+                      className="popup-button-wrapper__item"
+                      onClick={() => handleNextStep()}>
+                      Skip {step - 1} / 4
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="chat-component">
+            {step === 2 ? <div className="partial-overlay"></div> : ""}
             <div className="chat-wrapper">
               <div className="chat-wrapper__glass">
                 <div className="chat-wrapper__container">
@@ -126,6 +193,7 @@ export default function App() {
             </div>
           </div>
           <div className="fullscreen">
+            {step === 3 ? <div className="partial-overlay"></div> : ""}
             <Globe
               layers={layers}
               latitude={34.2}
