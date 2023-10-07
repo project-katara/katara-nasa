@@ -8,6 +8,7 @@ import Globe from "worldwind-react-globe";
 import student from "./assets/student.png";
 import teacher from "./assets/teacher.png";
 import logo from "./assets/water_llm_logo.png";
+import starIcon from "./assets/icon_tutorial_start.png";
 import "./App.css";
 
 export default function App() {
@@ -17,8 +18,12 @@ export default function App() {
 
   const layers = ["usgs-topo", "stars"];
 
-  const handleNextStep = () => {
-    setStep((current) => current + 1);
+  const handleNextStep = (step) => {
+    if (!step) {
+      setStep((current) => current + 1);
+    } else {
+      setStep(6);
+    }
   };
 
   useEffect(() => {
@@ -27,6 +32,7 @@ export default function App() {
     }
 
     if (step === 2) {
+      popup.classList.remove("popup--disabled");
       popup.classList.add("popup--one");
     } else if (step === 3) {
       popup.classList.add("popup--two");
@@ -112,15 +118,27 @@ export default function App() {
       )}
       <div className="wrapper">
         <div className="container">
-          <div className="popup-component">
+          <div className="popup-component popup--disabled">
             <div className="popup-component__wrapper">
               <div className="popup-component__wrapper__container">
-                <div className="popup-number-wrapper">
-                  <div className="popup-number-wrapper__container">
-                    <h3 className="popup-number">{step - 1}</h3>
+                {step < 5 && (
+                  <div className="popup-number-wrapper">
+                    <div className="popup-number-wrapper__container">
+                      <h3 className="popup-number">{step - 1}</h3>
+                    </div>
                   </div>
-                </div>
+                )}
                 <div className="popup-header">
+                  {step === 5 && (
+                    <div className="popup-icon-wrapper">
+                      <div className="popup-icon-wrapper__container">
+                        <img
+                          src={starIcon}
+                          className="popup-icon-wrapper__container__icon"
+                        />
+                      </div>
+                    </div>
+                  )}
                   {step === 2 && (
                     <>
                       <h3 className="popup-title">Explore Earth</h3>
@@ -145,6 +163,14 @@ export default function App() {
                       </p>
                     </>
                   )}
+                  {step === 5 && (
+                    <>
+                      <h3 className="popup-title">Aweasome!</h3>
+                      <p className="popup-description">
+                        Experience Project Katara freely now!
+                      </p>
+                    </>
+                  )}
                 </div>
                 <div className="popup-button-wrapper">
                   {step === 5 ? (
@@ -164,7 +190,6 @@ export default function App() {
               </div>
             </div>
           </div>
-
           <div className="chat-component">
             {step === 2 ? <div className="partial-overlay"></div> : ""}
             <div className="chat-wrapper">
@@ -193,6 +218,18 @@ export default function App() {
             </div>
           </div>
           <div className="fullscreen">
+            {step !== 6 && (
+              <div className="button-wrapper button-wrapper--skip-tutorial">
+                <div className="button-wrapper__container">
+                  <button
+                    className="button-container__item"
+                    onClick={() => handleNextStep("finish")}>
+                    Skip tutorial
+                  </button>
+                </div>
+              </div>
+            )}
+
             {step === 3 ? <div className="partial-overlay"></div> : ""}
             <Globe
               layers={layers}
