@@ -5,39 +5,32 @@
  */
 import React, { Component } from 'react'
 import Globe from 'worldwind-react-globe'
-
+import Chat from './components/Chat/index'
 import './App.css'
-export default class App extends Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      lat: 34.2,
-      lon: -119.2,
-      alt: 10e6
-    }
-    this.globeRef = React.createRef();
-  }
 
+export default class App extends Component {
   render() {
-    // See Globe.layerTypes for a list of predefined layers
+
     const layers = [
-      "eox-sentinal2-labels",
-      "coordinates",
-      "view-controls",
-      "stars",
-      "atmosphere-day-night"
+      'usgs-topo',
+      'stars',
     ];
 
     return (
-        <div className="fullscreen">
-            <Globe 
-                ref={this.globeRef}
-                layers={layers}
-                latitude={this.state.lat}
-                longitude={this.state.lon}
-                altitude={this.state.alt} 
-                />
-        </div>
+			<div class="wrapper">
+				<div class="container">
+					<Chat />
+					<div className='fullscreen'>
+						<Globe 
+							ref={this.globeRef}
+							layers={layers}
+							latitude={34.2}
+							longitude={-119.2}
+							altitude={10e6} 
+						/>
+					</div>
+				</div> 
+			</div>  
     )
   }
 }
