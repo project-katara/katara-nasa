@@ -34,6 +34,21 @@ export default function App() {
     longitude: -119.2,
   });
 
+  const [questions, setQuestions] = useState([]);
+  const [chatInput, setChatInput] = useState("");
+
+  const handleOnChange = (e) => {
+    setChatInput(e.target.value);
+  };
+
+  const handleOnSubmit = () => {
+    setQuestions((previousQuestion) => [...previousQuestion, chatInput]);
+  };
+
+  useEffect(() => {
+    localStorage.setItem("questions", JSON.stringify(questions));
+  }, [questions]);
+
   const globeRef = useRef();
 
   const popup = document.querySelector(".popup-component");
@@ -341,7 +356,7 @@ export default function App() {
                 <div className="chat-wrapper__container">
                   <img className="logo" src={logo} />
                   <div className="chat-content">
-                    {step < 6 && (
+                    {step < 6 ? (
                       <>
                         <div className="selected-questions-box">
                           <div
@@ -388,6 +403,33 @@ export default function App() {
                           </>
                         )}
                       </>
+                    ) : (
+                      <>
+                        {questions.map((data) => (
+                          <>
+                            <div className="selected-questions-box">
+                              <div
+                                className="selected-questions-box__item"
+                                onClick={() =>
+                                  handleSelectedQuestions(1, "firstAnswer")
+                                }>
+                                <div className="selected-questions-box__item__wrapper">
+                                  <div className="selected-question-container">
+                                    <p className="selected-question-container__text">
+                                      {data}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="selected-answers-box">
+                              <p
+                                className="selected-answers-box__answer"
+                                id="firstAnswer"></p>
+                            </div>
+                          </>
+                        ))}
+                      </>
                     )}
                   </div>
                 </div>
@@ -395,8 +437,10 @@ export default function App() {
                   <input
                     placeholder="Type message..."
                     className="chat-input-box__item"
+                    onChange={(e) => handleOnChange(e)}
                   />
                   <svg
+                    onClick={() => handleOnSubmit()}
                     width="21"
                     height="26"
                     viewBox="0 0 21 26"
