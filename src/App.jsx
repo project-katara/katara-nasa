@@ -19,6 +19,9 @@ const WorldWind = window.WorldWind;
 import HydroRIVERSColorLayer from './layers/HydroRIVERSColorLayer';
 import HydroLAKESPolysColorLayer from './layers/HydroLAKESPolysColorLayer';
 import BasinATLASColorLayer from './layers/BasinATLASColorLayer';
+import GlobalRiverClassificationColorLayer from './layers/GlobalRiverClassificationColorLayer';
+import LakeATLASPntColorLayer from './layers/LakeATLASPointColorLayer';
+import LakeATLASPolygonColorLayer from './layers/LakeATLASPolygonColorLayer';
 
 export default function App() {
   const [status, setStatus] = useState(true);
@@ -45,19 +48,31 @@ export default function App() {
   const layers = [
     {
       layer: new HydroRIVERSColorLayer(),
-      options: { category: 'base', enabled: false },
+      options: { category: 'overlay', enabled: false },
     },
     {
       layer: new HydroLAKESPolysColorLayer(),
-      options: { category: 'base', enabled: false },
+      options: { category: 'overlay', enabled: false },
     },
     {
       layer: new BasinATLASColorLayer(),
-      options: { category: 'base', enabled: false },
+      options: { category: 'overlay', enabled: false },
     },
-    { layer: 'coordinates', options: { category: 'setting', enabled: true } },
+    {
+      layer: new GlobalRiverClassificationColorLayer(),
+      options: { category: 'overlay', enabled: false },
+    },
+    {
+      layer: new LakeATLASPntColorLayer(),
+      options: { category: 'overlay', enabled: false },
+    },
+    {
+      layer: new LakeATLASPolygonColorLayer(),
+      options: { category: 'overlay', enabled: true },
+    },
     'stars',
     'atmosphere-day-night',
+    'bing-roads',
   ];
 
   const handleNextStep = (step) => {
@@ -335,34 +350,6 @@ export default function App() {
                         <div className='selected-question-container'>
                           <p className='selected-question-container__text'>
                             Show me the longest river in the world
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='selected-questions-box'>
-                    <div
-                      className='selected-questions-box__item'
-                      onClick={() => handleShowLayer('BasinATLAS_v10')}
-                    >
-                      <div className='selected-questions-box__item__wrapper'>
-                        <div className='selected-question-container'>
-                          <p className='selected-question-container__text'>
-                            Show
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className='selected-questions-box'>
-                    <div
-                      className='selected-questions-box__item'
-                      onClick={() => handleHideLayer('BasinATLAS_v10')}
-                    >
-                      <div className='selected-questions-box__item__wrapper'>
-                        <div className='selected-question-container'>
-                          <p className='selected-question-container__text'>
-                            Hide
                           </p>
                         </div>
                       </div>
