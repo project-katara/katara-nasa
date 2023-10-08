@@ -64,6 +64,7 @@ button {
     #43a5ff 348.4036946296692deg
   );
   height: 100vh;
+  max-width: 600px;
   min-width: 600px;
   padding: 20px;
 }
@@ -74,6 +75,11 @@ button {
   flex-direction: column;
   height: 100%;
   padding: 20px 0 90px;
+}
+
+.selected-answers-box {
+  opacity: 1;
+  transition: ease-in-out 0.3s;
 }
 
 .logo {
@@ -105,12 +111,16 @@ button {
   margin: 30px 0 0;
 }
 
+.selected-questions-box__item {
+  margin: 0 0 0 55px;
+}
+
 .selected-questions-box__item__wrapper {
   background: var(
     --question-border,
     linear-gradient(0deg, rgba(113, 144, 254, 0) 0.03%, #7190fe 99.97%)
   );
-  border-radius: 15px;
+  border-radius: 25px 25px 5px 25px;
   box-shadow: 0px 4px 25px 0px rgba(0, 0, 0, 0.16);
   cursor: pointer;
   max-width: 420px;
@@ -130,8 +140,34 @@ button {
 
 .selected-questions-box__item__wrapper,
 .selected-question-container {
-  border-radius: 15px;
+  border-radius: 25px 25px 5px 25px;
 }
+
+.selected-answers-box {
+  margin: 15px 55px 0 0;
+  max-width: 420px;
+}
+
+.selected-answers-box__answer--background {
+  background: rgba(16, 28, 74, 0.26);
+  border: 1px solid #7392ff;
+  border-radius: 25px 25px 25px 5px;
+  padding: 2rem;
+}
+
+/* The typing effect */
+@keyframes typing {
+  from {
+    height: 0;
+    width: 0;
+  }
+  to {
+    height: fit-content;
+    width: 100%;
+  }
+}
+
+/* The typewriter cursor effect */
 
 .chat-input-box {
   bottom: 18px;

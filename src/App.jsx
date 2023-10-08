@@ -23,7 +23,11 @@ export default function App() {
   const globePartialOverlay = document.querySelector(
     ".partial-overlay.globe-partial-overlay"
   );
-  console.log(globePartialOverlay);
+  const selectedQuestionAnswerBox = document.querySelector(
+    ".selected-answers-box__answer"
+  );
+  let selectedQuestionAnswer =
+    "The longest river in the world is the Nile River. It flows through northeastern Africa and is approximately 6,650 kilometers (4,130 miles) long. I will show the Nile River on the map! Zoom it to get all the details!";
 
   const layers = ["usgs-topo", "stars"];
 
@@ -39,6 +43,18 @@ export default function App() {
     if (questionNumber === 1) {
       setCoordinates({ latitude: 29.533438, longitude: 31.270695 });
     }
+  };
+
+  const chatAnswerAnimation = () => {
+    let i = 0;
+
+    const timerId = setInterval(() => {
+      selectedQuestionAnswerBox.innerHTML += selectedQuestionAnswer.charAt(i);
+      i++;
+      if (i === selectedQuestionAnswer.length) {
+        clearInterval(timerId);
+      }
+    }, 40);
   };
 
   useEffect(() => {
@@ -67,7 +83,19 @@ export default function App() {
     if (globePartialOverlay !== null) {
       globePartialOverlay.classList.add("globe-partial-overlay--disabled");
     }
+
+    if (selectedQuestionAnswerBox !== null) {
+      chatAnswerAnimation();
+
+      selectedQuestionAnswerBox.classList.add(
+        "selected-answers-box__answer--background"
+      );
+    }
   }, [coordinates]);
+
+  const handleChatInput = (event) => {
+    setChatAnswer(event.target.value);
+  };
 
   return (
     <>
@@ -227,11 +255,14 @@ export default function App() {
                       <div className="selected-questions-box__item__wrapper">
                         <div className="selected-question-container">
                           <p className="selected-question-container__text">
-                            “Show me the longest river in the world”
+                            Show me the longest river in the world
                           </p>
                         </div>
                       </div>
                     </div>
+                  </div>
+                  <div className="selected-answers-box">
+                    <p className="selected-answers-box__answer"></p>
                   </div>
                 </div>
                 <div className="chat-input-box">
