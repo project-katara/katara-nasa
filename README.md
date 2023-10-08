@@ -11,6 +11,8 @@ The Web App Katara's interactive experience is based on a Language Model and an 
 
 - [WorldWindJs](https://github.com/WorldWindEarth/worldwindjs) - used for displaying the interactive 3D globe, which is a fork of an open-source planetary globe engine, the [Web WorldWind](https://worldwind.arc.nasa.gov/web/) platform.
 
+- [GeoServer](https://github.com/project-katara/geoserver) - the open source software GeoServer was used for building the layers of the 3D globe.
+
 - [Llama 2](https://huggingface.co/docs/transformers/main/model_doc/llama2) - llama 2 pretrained model, with average 7 billion parameters as a base, was used for building Katara LLM, however it was fine-tuned using NASA datasets and documents to answer Earth's water related questions.
   
 <div style="display:flex;justify-content:center;">
@@ -35,6 +37,7 @@ All of the sources that helped building the project, such as datasets, documents
 
 ## Repositories
 
+- [GeoServer](https://github.com/project-katara/geoserver)
 - [Web WorldWind](https://worldwind.arc.nasa.gov/web/)
 - [WorldWindJs](https://github.com/WorldWindEarth/worldwindjs)
   
