@@ -126,6 +126,23 @@ button {
   padding: 20px;
 }
 
+.chat-content {
+  max-width: 450px;
+  overflow-y: auto;
+  width: 100%;
+}
+
+/* width */
+.chat-content::-webkit-scrollbar {
+  width: 0px;
+}
+
+/* Track */
+.chat-content::-webkit-scrollbar-track,
+.chat-content::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
 .chat-wrapper__container {
   align-items: center;
   display: flex;
@@ -163,10 +180,11 @@ button {
 }
 
 .selected-questions-box {
-  align-items: center;
+  align-items: flex-end;
   display: flex;
   flex-direction: column;
   margin: 15px 0 0;
+  width: 100%;
 }
 
 .selected-questions-box__item {
@@ -179,7 +197,6 @@ button {
     linear-gradient(0deg, rgba(113, 144, 254, 0) 0.03%, #7190fe 99.97%)
   );
   border-radius: 25px 25px 5px 25px;
-  box-shadow: 0px 4px 25px 0px rgba(0, 0, 0, 0.16);
   cursor: pointer;
   max-width: 420px;
   padding: 1px;
@@ -188,12 +205,12 @@ button {
 
 .selected-question-container {
   background: linear-gradient(180deg, #0d1840 0%, #172b71 100%);
-  padding: 1rem 2rem;
+  padding: 1rem 2rem 1rem 1.5rem;
 }
 
 .selected-question-container__text {
   font-size: 18px;
-  text-align: center;
+  text-align: left;
 }
 
 .selected-questions-box__item__wrapper,
@@ -214,7 +231,7 @@ button {
   background: rgba(16, 28, 74, 0.26);
   border: 1px solid #7392ff;
   border-radius: 25px 25px 25px 5px;
-  padding: 2rem;
+  padding: 1rem 1.5rem 1rem 2rem;
 }
 
 /* The typing effect */
