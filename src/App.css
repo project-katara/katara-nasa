@@ -148,6 +148,10 @@ button {
   max-width: 420px;
 }
 
+.selected-answers-box__answer {
+  transition: ease-in-out 0.4s;
+}
+
 .selected-answers-box__answer--background {
   background: rgba(16, 28, 74, 0.26);
   border: 1px solid #7392ff;
@@ -354,7 +358,7 @@ a {
 
 .popup-component.popup--two {
   left: calc(600px - 50px);
-  max-width: 270px;
+  max-width: 345px;
   right: inherit;
   top: 25%;
 }
@@ -432,10 +436,12 @@ a {
 
 .popup-title {
   font-size: 25px;
+  line-height: 25px;
 }
 
 .popup-description {
   font-size: 18px;
+  margin: 10px 0 0;
 }
 
 .popup-button-wrapper {
