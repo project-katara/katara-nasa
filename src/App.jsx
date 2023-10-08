@@ -18,6 +18,7 @@ const WorldWind = window.WorldWind;
 
 import HydroRIVERSColorLayer from './layers/HydroRIVERSColorLayer';
 import HydroLAKESPolysColorLayer from './layers/HydroLAKESPolysColorLayer';
+import BasinATLASColorLayer from './layers/BasinATLASColorLayer';
 
 export default function App() {
   const [status, setStatus] = useState(true);
@@ -48,6 +49,10 @@ export default function App() {
     },
     {
       layer: new HydroLAKESPolysColorLayer(),
+      options: { category: 'base', enabled: false },
+    },
+    {
+      layer: new BasinATLASColorLayer(),
       options: { category: 'base', enabled: false },
     },
     { layer: 'coordinates', options: { category: 'setting', enabled: true } },
@@ -330,6 +335,34 @@ export default function App() {
                         <div className='selected-question-container'>
                           <p className='selected-question-container__text'>
                             Show me the longest river in the world
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className='selected-questions-box'>
+                    <div
+                      className='selected-questions-box__item'
+                      onClick={() => handleShowLayer('BasinATLAS_v10')}
+                    >
+                      <div className='selected-questions-box__item__wrapper'>
+                        <div className='selected-question-container'>
+                          <p className='selected-question-container__text'>
+                            Show
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className='selected-questions-box'>
+                    <div
+                      className='selected-questions-box__item'
+                      onClick={() => handleHideLayer('BasinATLAS_v10')}
+                    >
+                      <div className='selected-questions-box__item__wrapper'>
+                        <div className='selected-question-container'>
+                          <p className='selected-question-container__text'>
+                            Hide
                           </p>
                         </div>
                       </div>
