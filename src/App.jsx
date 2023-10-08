@@ -477,11 +477,11 @@ export default function App() {
               </div>
             </div>
             {step !== 6 && (
-              <div className="button-wrapper button-wrapper--skip-tutorial">
+              <div
+                className="button-wrapper button-wrapper--skip-tutorial"
+                onClick={() => handleNextStep("finish")}>
                 <div className="button-wrapper__container">
-                  <button
-                    className="button-container__item"
-                    onClick={() => handleNextStep("finish")}>
+                  <button className="button-container__item">
                     Skip tutorial
                   </button>
                 </div>
