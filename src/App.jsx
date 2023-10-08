@@ -450,7 +450,7 @@ export default function App() {
                 <div className="chat-input-box">
                   <div className="chat-input-box__container">
                     <input
-                      placeholder="Type message..."
+                      placeholder="Ask Katara..."
                       className="chat-input-box__item"
                       onChange={(e) => handleOnChange(e)}
                     />
