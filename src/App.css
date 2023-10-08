@@ -250,10 +250,16 @@ button {
 
 .chat-input-box {
   bottom: 18px;
-  display: flex;
-  justify-content: center;
   height: 55px;
   position: absolute;
+  width: 100%;
+}
+
+.chat-input-box__container {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  position: relative;
   width: 100%;
 }
 
@@ -272,10 +278,17 @@ button {
   width: 100%;
 }
 
-.chat-input-box svg {
+.chat-input-box .chat-input-box__button {
+  align-items: center;
+  display: flex;
+  background-color: transparent;
+  border: 0;
+  cursor: pointer;
+  justify-content: center;
+  padding: 2px;
   position: absolute;
   right: 49px;
-  transform: translate(0, 55%);
+  transform: translate(0, 45.5%);
 }
 
 .chat-input-box__item:focus {

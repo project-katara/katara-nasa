@@ -28,6 +28,7 @@ import LakeATLASPolygonColorLayer from "./layers/LakeATLASPolygonColorLayer";
 
 export default function App() {
   const [answerId] = useState(`answer-${uuidv4()}`);
+  const [questionId] = useState(`question-${uuidv4()}`);
 
   const [status, setStatus] = useState(true);
   const [step, setStep] = useState(0);
@@ -60,9 +61,9 @@ export default function App() {
   const globePartialOverlay = document.querySelector(
     ".partial-overlay.globe-partial-overlay"
   );
-  let firstAnswer =
+  let firstPredefinedAnswer =
     "The longest river in the world is the Nile River. It flows through northeastern Africa and is approximately 6,650 kilometers (4,130 miles) long. I will show the Nile River on the map! Zoom it to get all the details!";
-  let secondAnswer =
+  let secondPredefinedAnswer =
     "Climate change can cause more intense and frequent rainfall in some regions, leading to severe floods, while other areas may suffer from prolonged droughts due to reduced precipitation, impacting water availability for agriculture and communities! I can show to you the difference between the rainfalls 100 years ago and now to illustrate if you want to!";
 
   const layers = [
@@ -102,32 +103,32 @@ export default function App() {
     }
   };
 
-  const chatAnswerAnimation = (questionID, answerVariable) => {
+  const chatAnswerAnimation = (answerId, answer) => {
     let i = 0;
-    let question = document.querySelector(`#${questionID}`);
+    let answerIdTemp = document.querySelector(`#${answerId}`);
 
     const timerId = setInterval(() => {
-      question.innerHTML += answerVariable.charAt(i);
+      answerIdTemp.innerHTML += answer.charAt(i);
       i++;
-      if (i === answerVariable.length) {
+      if (i === answer.length) {
         clearInterval(timerId);
       }
     }, 40);
   };
 
-  const handleSelectedQuestions = (questionNumber, questionID) => {
-    let question = document.querySelector("#" + `${questionID}`);
+  const handleSelectedQuestions = (answerNumber, answerId) => {
+    let answer = document.querySelector("#" + `${answerId}`);
 
-    if (question !== null) {
-      question.classList.add("selected-answers-box__answer--background");
+    if (answer !== null) {
+      answer.classList.add("selected-answers-box__answer--background");
     }
 
-    if (questionNumber === 1) {
+    if (answerNumber === 1) {
       handleShowLayer("HydroRIVERS_v10");
       setCoordinates({ latitude: 29.533438, longitude: 31.270695 });
-      chatAnswerAnimation("firstAnswer", firstAnswer);
-    } else if (questionNumber === 2) {
-      chatAnswerAnimation("secondAnswer", secondAnswer);
+      chatAnswerAnimation("firstPredefinedAnswer", firstPredefinedAnswer);
+    } else if (answerNumber === 2) {
+      chatAnswerAnimation("secondPredefinedAnswer", secondPredefinedAnswer);
     }
   };
 
@@ -366,7 +367,10 @@ export default function App() {
                           <div
                             className="selected-questions-box__item"
                             onClick={() =>
-                              handleSelectedQuestions(1, "firstAnswer")
+                              handleSelectedQuestions(
+                                1,
+                                "firstPredefinedAnswer"
+                              )
                             }>
                             <div className="selected-questions-box__item__wrapper">
                               <div className="selected-question-container">
@@ -380,7 +384,7 @@ export default function App() {
                         <div className="selected-answers-box">
                           <p
                             className="selected-answers-box__answer"
-                            id="firstAnswer"></p>
+                            id="firstPredefinedAnswer"></p>
                         </div>
                         {step > 3 && (
                           <>
@@ -388,7 +392,10 @@ export default function App() {
                               <div
                                 className="selected-questions-box__item"
                                 onClick={() =>
-                                  handleSelectedQuestions(2, "secondAnswer")
+                                  handleSelectedQuestions(
+                                    2,
+                                    "secondPredefinedAnswer"
+                                  )
                                 }>
                                 <div className="selected-questions-box__item__wrapper">
                                   <div className="selected-question-container">
@@ -402,7 +409,7 @@ export default function App() {
                             <div className="selected-answers-box">
                               <p
                                 className="selected-answers-box__answer"
-                                id="secondAnswer"></p>
+                                id="secondPredefinedAnswer"></p>
                             </div>
                           </>
                         )}
@@ -415,7 +422,10 @@ export default function App() {
                               <div
                                 className="selected-questions-box__item"
                                 onClick={() =>
-                                  handleSelectedQuestions(1, "firstAnswer")
+                                  handleSelectedQuestions(
+                                    1,
+                                    "firstPredefinedAnswer"
+                                  )
                                 }>
                                 <div className="selected-questions-box__item__wrapper">
                                   <div className="selected-question-container">
@@ -438,23 +448,27 @@ export default function App() {
                   </div>
                 </div>
                 <div className="chat-input-box">
-                  <input
-                    placeholder="Type message..."
-                    className="chat-input-box__item"
-                    onChange={(e) => handleOnChange(e)}
-                  />
-                  <svg
-                    onClick={() => handleOnSubmit()}
-                    width="21"
-                    height="26"
-                    viewBox="0 0 21 26"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      d="M17.7977 11.6005L4.6727 4.10909C4.45146 3.98499 4.1977 3.93113 3.94512 3.95468C3.69254 3.97823 3.45311 4.07806 3.25862 4.24092C3.06414 4.40379 2.9238 4.62197 2.85627 4.86648C2.78873 5.111 2.79719 5.37028 2.88051 5.60987L5.30239 12.6778C5.30208 12.6804 5.30208 12.6831 5.30239 12.6857C5.30195 12.6882 5.30195 12.6909 5.30239 12.6935L2.88051 19.7771C2.81378 19.9655 2.79324 20.1673 2.8206 20.3653C2.84796 20.5634 2.92244 20.752 3.03777 20.9153C3.15311 21.0786 3.30594 21.2119 3.48343 21.3039C3.66093 21.396 3.85792 21.4441 4.05785 21.4442C4.27478 21.4437 4.4879 21.3872 4.6766 21.2802L17.7946 13.7763C17.9881 13.6679 18.1492 13.51 18.2616 13.3187C18.3739 13.1275 18.4333 12.9098 18.4337 12.688C18.4341 12.4662 18.3754 12.2483 18.2638 12.0566C18.1522 11.865 17.9916 11.7065 17.7985 11.5974L17.7977 11.6005ZM4.05785 20.1942V20.1872L6.41254 13.3192H10.9329C11.0986 13.3192 11.2576 13.2534 11.3748 13.1362C11.492 13.019 11.5579 12.86 11.5579 12.6942C11.5579 12.5285 11.492 12.3695 11.3748 12.2523C11.2576 12.1351 11.0986 12.0692 10.9329 12.0692H6.41879L4.06254 5.20362L4.05785 5.19425L17.1829 12.681L4.05785 20.1942Z"
-                      fill="white"
+                  <div className="chat-input-box__container">
+                    <input
+                      placeholder="Type message..."
+                      className="chat-input-box__item"
+                      onChange={(e) => handleOnChange(e)}
                     />
-                  </svg>
+                    <div className="chat-input-box__button">
+                      <svg
+                        onClick={() => handleOnSubmit()}
+                        width="21"
+                        height="26"
+                        viewBox="0 0 21 26"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          d="M17.7977 11.6005L4.6727 4.10909C4.45146 3.98499 4.1977 3.93113 3.94512 3.95468C3.69254 3.97823 3.45311 4.07806 3.25862 4.24092C3.06414 4.40379 2.9238 4.62197 2.85627 4.86648C2.78873 5.111 2.79719 5.37028 2.88051 5.60987L5.30239 12.6778C5.30208 12.6804 5.30208 12.6831 5.30239 12.6857C5.30195 12.6882 5.30195 12.6909 5.30239 12.6935L2.88051 19.7771C2.81378 19.9655 2.79324 20.1673 2.8206 20.3653C2.84796 20.5634 2.92244 20.752 3.03777 20.9153C3.15311 21.0786 3.30594 21.2119 3.48343 21.3039C3.66093 21.396 3.85792 21.4441 4.05785 21.4442C4.27478 21.4437 4.4879 21.3872 4.6766 21.2802L17.7946 13.7763C17.9881 13.6679 18.1492 13.51 18.2616 13.3187C18.3739 13.1275 18.4333 12.9098 18.4337 12.688C18.4341 12.4662 18.3754 12.2483 18.2638 12.0566C18.1522 11.865 17.9916 11.7065 17.7985 11.5974L17.7977 11.6005ZM4.05785 20.1942V20.1872L6.41254 13.3192H10.9329C11.0986 13.3192 11.2576 13.2534 11.3748 13.1362C11.492 13.019 11.5579 12.86 11.5579 12.6942C11.5579 12.5285 11.492 12.3695 11.3748 12.2523C11.2576 12.1351 11.0986 12.0692 10.9329 12.0692H6.41879L4.06254 5.20362L4.05785 5.19425L17.1829 12.681L4.05785 20.1942Z"
+                          fill="white"
+                        />
+                      </svg>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
