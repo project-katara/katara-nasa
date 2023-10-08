@@ -42,11 +42,15 @@ export default function App() {
   const [chatInput, setChatInput] = useState("");
 
   const handleOnChange = (e) => {
-    setChatInput(e.target.value);
+    if (step >= 6) {
+      setChatInput(e.target.value);
+    }
   };
 
   const handleOnSubmit = () => {
-    setQuestions((previousQuestion) => [...previousQuestion, chatInput]);
+    if (step >= 6) {
+      setQuestions((previousQuestion) => [...previousQuestion, chatInput]);
+    }
   };
 
   useEffect(() => {
@@ -450,7 +454,12 @@ export default function App() {
                 <div className="chat-input-box">
                   <div className="chat-input-box__container">
                     <input
-                      placeholder="Ask Katara..."
+                      value={chatInput}
+                      placeholder={
+                        step >= 6
+                          ? "Ask Katara..."
+                          : "You can type when the tutorial is completed!"
+                      }
                       className="chat-input-box__item"
                       onChange={(e) => handleOnChange(e)}
                     />
