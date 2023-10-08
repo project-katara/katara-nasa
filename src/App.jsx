@@ -197,6 +197,15 @@ export default function App() {
                 <div className="chat-wrapper__container">
                   <img className="logo" src={logo} />
                 </div>
+                <div className="selected-questions-box">
+                  <div className="selected-questions-box__item">
+                    <div className="selected-questions-box__item__wrapper">
+                      <div className="selected-question-container">
+                        <p className="selected-question-container__text"></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <div className="chat-input-box">
                   <input
                     placeholder="Type message..."

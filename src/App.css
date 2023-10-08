@@ -89,6 +89,12 @@ button {
   width: 100%;
 }
 
+.selected-questions-box {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+}
+
 .chat-input-box {
   bottom: 18px;
   display: flex;
