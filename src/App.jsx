@@ -14,7 +14,16 @@ import "./App.css";
 export default function App() {
   const [status, setStatus] = useState(true);
   const [step, setStep] = useState(0);
+  const [coordinates, setCoordinates] = useState({
+    latitude: 34.2,
+    longitude: -119.2,
+  });
   const popup = document.querySelector(".popup-component");
+
+  const globePartialOverlay = document.querySelector(
+    ".partial-overlay.globe-partial-overlay"
+  );
+  console.log(globePartialOverlay);
 
   const layers = ["usgs-topo", "stars"];
 
@@ -23,6 +32,12 @@ export default function App() {
       setStep((current) => current + 1);
     } else {
       setStep(6);
+    }
+  };
+
+  const handleSelectedQuestions = (questionNumber) => {
+    if (questionNumber === 1) {
+      setCoordinates({ latitude: 29.533438, longitude: 31.270695 });
     }
   };
 
@@ -36,14 +51,23 @@ export default function App() {
       popup.classList.add("popup--one");
     } else if (step === 3) {
       popup.classList.add("popup--two");
+      popup.classList.remove("popup--one");
     } else if (step === 4) {
       popup.classList.add("popup--three");
+      popup.classList.remove("popup--two");
     } else if (step === 5) {
       popup.classList.add("popup--final");
+      popup.classList.remove("popup--three");
     } else if (step > 5) {
       popup.classList.add("popup--disabled");
     }
   }, [step]);
+
+  useEffect(() => {
+    if (globePartialOverlay !== null) {
+      globePartialOverlay.classList.add("globe-partial-overlay--disabled");
+    }
+  }, [coordinates]);
 
   return (
     <>
@@ -97,11 +121,11 @@ export default function App() {
                         </p>
                       </div>
 
-                      <div className="button-wrapper">
+                      <div
+                        className="button-wrapper"
+                        onClick={() => handleNextStep()}>
                         <div className="button-wrapper__container">
-                          <button
-                            className="button-container__item"
-                            onClick={() => handleNextStep()}>
+                          <button className="button-container__item">
                             Follow tutorial
                           </button>
                         </div>
@@ -196,12 +220,16 @@ export default function App() {
               <div className="chat-wrapper__glass">
                 <div className="chat-wrapper__container">
                   <img className="logo" src={logo} />
-                </div>
-                <div className="selected-questions-box">
-                  <div className="selected-questions-box__item">
-                    <div className="selected-questions-box__item__wrapper">
-                      <div className="selected-question-container">
-                        <p className="selected-question-container__text"></p>
+                  <div className="selected-questions-box">
+                    <div
+                      className="selected-questions-box__item"
+                      onClick={() => handleSelectedQuestions(1)}>
+                      <div className="selected-questions-box__item__wrapper">
+                        <div className="selected-question-container">
+                          <p className="selected-question-container__text">
+                            “Show me the longest river in the world”
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -239,11 +267,15 @@ export default function App() {
               </div>
             )}
 
-            {step === 3 ? <div className="partial-overlay"></div> : ""}
+            {step === 3 ? (
+              <div className="partial-overlay globe-partial-overlay"></div>
+            ) : (
+              ""
+            )}
             <Globe
               layers={layers}
-              latitude={34.2}
-              longitude={-119.2}
+              latitude={coordinates.latitude}
+              longitude={coordinates.longitude}
               altitude={10e6}
             />
           </div>
