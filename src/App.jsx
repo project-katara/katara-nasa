@@ -12,6 +12,8 @@ import student from "./assets/student.png";
 import teacher from "./assets/teacher.png";
 import logo from "./assets/water_llm_logo.png";
 import starIcon from "./assets/icon_tutorial_start.png";
+import chartIcon from "./assets/icon_tutorial_chart.png";
+import downloadIcon from "./assets/icon_tutorial_download.png";
 import "./App.css";
 
 const WorldWind = window.WorldWind;
@@ -410,6 +412,22 @@ export default function App() {
             </div>
           </div>
           <div className="fullscreen">
+            <div className="ui-actions-box">
+              <div
+                className="ui-actions-box__item"
+                data-action-text="Download as CSV: upcoming feature.">
+                <a className="ui-actions-box__item__link">
+                  <img src={downloadIcon} />
+                </a>
+              </div>
+              <div
+                className="ui-actions-box__item"
+                data-action-text="Charts: upcoming feature.">
+                <a className="ui-actions-box__item__link">
+                  <img src={chartIcon} />
+                </a>
+              </div>
+            </div>
             {step !== 6 && (
               <div className="button-wrapper button-wrapper--skip-tutorial">
                 <div className="button-wrapper__container">
