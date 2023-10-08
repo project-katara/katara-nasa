@@ -5,6 +5,7 @@
  */
 
 import "worldwindjs";
+import { v4 as uuidv4 } from "uuid";
 
 import { useEffect, useRef, useState } from "react";
 import Globe from "worldwind-react-globe";
@@ -26,6 +27,8 @@ import LakeATLASPntColorLayer from "./layers/LakeATLASPointColorLayer";
 import LakeATLASPolygonColorLayer from "./layers/LakeATLASPolygonColorLayer";
 
 export default function App() {
+  const [answerId] = useState(`answer-${uuidv4()}`);
+
   const [status, setStatus] = useState(true);
   const [step, setStep] = useState(0);
   const [globe, setGlobe] = useState(null);
@@ -47,6 +50,7 @@ export default function App() {
 
   useEffect(() => {
     localStorage.setItem("questions", JSON.stringify(questions));
+    console.log(uuidv4());
   }, [questions]);
 
   const globeRef = useRef();
@@ -425,7 +429,7 @@ export default function App() {
                             <div className="selected-answers-box">
                               <p
                                 className="selected-answers-box__answer"
-                                id="firstAnswer"></p>
+                                id={answerId}></p>
                             </div>
                           </>
                         ))}
