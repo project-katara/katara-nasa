@@ -132,6 +132,9 @@ export default function App() {
       setCoordinates({ latitude: 29.533438, longitude: 31.270695 });
       chatAnswerAnimation("firstPredefinedAnswer", firstPredefinedAnswer);
     } else if (answerNumber === 2) {
+      handleHideLayer("HydroRIVERS_v10");
+      handleShowLayer("LakeATLAS_v10_pol");
+      setCoordinates({ latitude: -23.5489, longitude: -46.6388 });
       chatAnswerAnimation("secondPredefinedAnswer", secondPredefinedAnswer);
     }
   };
