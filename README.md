@@ -15,7 +15,9 @@ The Web App Katara's interactive experience is based on a Language Model and an 
 
 - [GeoServer](https://github.com/project-katara/geoserver) - the open source software GeoServer was used for building the layers of the 3D globe.
 
-- [Llama 2](https://huggingface.co/docs/transformers/main/model_doc/llama2) - llama 2 pretrained model, with average 7 billion parameters as a base, was used for building Katara LLM, however it was fine-tuned using NASA datasets and documents to answer Earth's water related questions.
+- [LLaMA 2](https://huggingface.co/docs/transformers/main/model_doc/llama2) - LLaMA 2 pretrained model, with average 7 billion parameters as a base, was used for building Katara LLM, however it was fine-tuned using NASA datasets and documents to answer Earth's water related questions.
+
+- [Katara](https://huggingface.co/spaces/dkdaniz/katara) - here you can try Katara LLM chat
   
 <div style="display:flex;justify-content:center;">
     <img src="./app_img.png" height="500"/>
@@ -40,6 +42,7 @@ All of the sources that helped building the project, such as datasets, documents
 ## Repositories
 
 - [GeoServer](https://github.com/project-katara/geoserver)
+- [Katara](https://huggingface.co/spaces/dkdaniz/katara)
 - [Web WorldWind](https://worldwind.arc.nasa.gov/web/)
 - [WorldWindJs](https://github.com/WorldWindEarth/worldwindjs)
   
@@ -62,7 +65,7 @@ All of the sources that helped building the project, such as datasets, documents
 - [JPL - History](https://www.jpl.nasa.gov/who-we-are/history)
 - [Improving health and reducing poverty through water safety and quality](https://www.who.int/activities/improving-water-safety)
 - [JPL - Mission Description](https://smap.jpl.nasa.gov/mission/description/)
-- [Llama 2](https://huggingface.co/docs/transformers/main/model_doc/llama2)
+- [LLaMA 2](https://huggingface.co/docs/transformers/main/model_doc/llama2)
 - [Methane | Vital Signs](https://climate.nasa.gov/vital-signs/methane/)
 - [NASA Climate Kids](https://climatekids.nasa.gov/carbon/)
 - [NASA Global Climate Change: Sustainability and Government Resources](https://climate.nasa.gov/solutions/resources/)
