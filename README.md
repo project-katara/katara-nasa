@@ -5,6 +5,8 @@
 # Project Katara
 Katara is a free web application that uses NASA's satellites data for giving to users a better understandment of the path of water across the entire Earth system and how the availability of this critical resource is affected by our changing climate through an interactive application. 
 
+<iframe width="1440" height="480" src="https://www.youtube.com/embed/rtFM8AYH_T0" title="Project Katara - Full Demonstration" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
 ## Features
 
 The Web App Katara's interactive experience is based on a Language Model and an open-source planetary globe engine. The LM responds to user's questions about the water with geographic information in texts and on an interactive 3D globe. 
