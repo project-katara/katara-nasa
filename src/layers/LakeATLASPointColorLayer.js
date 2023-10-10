@@ -22,7 +22,7 @@ export default class LakeATLASPntColorLayer extends WorldWind.WmsLayer {
     let cfg = {
       title: "LakeATLAS_v10_pnt",
       version: "1.3.0",
-      service: "https://104.248.127.100/geoserver/ows?",
+      service: "https://maps.katara.earth/geoserver/ows?",
       layerNames: "ne:LakeATLAS_v10_pnt",
       sector: new WorldWind.Sector(-90.0, 90.0, -180, 180),
       levelZeroDelta: new WorldWind.Location(180, 180),
