@@ -1,15 +1,15 @@
-/* 
+/*
  * Copyright (c) 2018 Bruce Schubert.
  * The MIT License
  * http://www.opensource.org/licenses/mit-license
  */
-import 'worldwindjs'; //WorldWind global
+import "worldwindjs"; //WorldWind global
 
 /*global define, WorldWind */
 
 /**
  * The USGSAstroGeologoy Layer
- * 
+ *
  * See: https://astrowebmaps.wr.usgs.gov/webmapatlas/Layers/maps.html
  */
 export default class HydroRIVERSColorLayer extends WorldWind.WmsLayer {
@@ -20,17 +20,17 @@ export default class HydroRIVERSColorLayer extends WorldWind.WmsLayer {
    */
   constructor() {
     let cfg = {
-      title: 'HydroRIVERS_v10',
-      version: '1.3.0',
-      service: 'http://104.248.127.100/geoserver/ows?',
-      layerNames: 'ne:HydroRIVERS_v10',
+      title: "HydroRIVERS_v10",
+      version: "1.3.0",
+      service: "https://104.248.127.100/geoserver/ows?",
+      layerNames: "ne:HydroRIVERS_v10",
       sector: new WorldWind.Sector(-90.0, 90.0, -180, 180),
       levelZeroDelta: new WorldWind.Location(180, 180),
       numLevels: 15,
-      format: 'image/png',
+      format: "image/png",
       size: 256,
-      coordinateSystem: 'EPSG:4326', // optional
-      styleNames: '', // (optional): {String} A comma separated list of the styles to include in this layer.</li>
+      coordinateSystem: "EPSG:4326", // optional
+      styleNames: "", // (optional): {String} A comma separated list of the styles to include in this layer.</li>
     };
     super(cfg);
 
