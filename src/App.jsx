@@ -6,15 +6,21 @@
 
 import 'worldwindjs';
 import { v4 as uuidv4 } from 'uuid';
+import useWebSocket, { ReadyState } from 'react-use-websocket';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import Globe from 'worldwind-react-globe';
-import student from './assets/student.png';
-import teacher from './assets/teacher.png';
-import logo from './assets/water_llm_logo.png';
-import starIcon from './assets/icon_tutorial_start.png';
-import chartIcon from './assets/icon_tutorial_chart.png';
-import downloadIcon from './assets/icon_tutorial_download.png';
+import {
+  student,
+  teacher,
+  logo,
+  starIcon,
+  chartIcon,
+  downloadIcon,
+} from './assets';
+
+import { config } from './config';
+
 import './App.css';
 
 const WorldWind = window.WorldWind;
@@ -27,9 +33,12 @@ import LakeATLASPntColorLayer from './layers/LakeATLASPointColorLayer';
 import LakeATLASPolygonColorLayer from './layers/LakeATLASPolygonColorLayer';
 
 export default function App() {
-  const [answerId] = useState(`answer-${uuidv4()}`);
-  const [questionId] = useState(`question-${uuidv4()}`);
-
+  const [socketUrl, setSocketUrl] = useState(
+    `${config.websocket.host}/${uuidv4()}`
+  );
+  const [messageHistory, setMessageHistory] = useState([]);
+  const [questions, setQuestions] = useState([]);
+  const [chatInput, setChatInput] = useState('');
   const [status, setStatus] = useState(true);
   const [step, setStep] = useState(0);
   const [globe, setGlobe] = useState(null);
@@ -38,25 +47,23 @@ export default function App() {
     longitude: -119.2,
   });
 
-  const [questions, setQuestions] = useState([]);
-  const [chatInput, setChatInput] = useState('');
-
-  const handleOnChange = (e) => {
-    if (step >= 6) {
-      setChatInput(e.target.value);
-    }
-  };
-
-  const handleOnSubmit = () => {
-    if (step >= 6) {
-      setQuestions((previousQuestion) => [...previousQuestion, chatInput]);
-    }
-  };
+  const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl);
 
   useEffect(() => {
-    localStorage.setItem('questions', JSON.stringify(questions));
-    console.log(uuidv4());
-  }, [questions]);
+    if (lastMessage !== null) {
+      setMessageHistory((prev) => prev.concat(lastMessage));
+    }
+  }, [lastMessage, setMessageHistory]);
+
+  const handleClickSendMessage = useCallback(() => sendMessage('Hello'), []);
+
+  const connectionStatus = {
+    [ReadyState.CONNECTING]: 'Connecting',
+    [ReadyState.OPEN]: 'Open',
+    [ReadyState.CLOSING]: 'Closing',
+    [ReadyState.CLOSED]: 'Closed',
+    [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
+  }[readyState];
 
   const globeRef = useRef();
 
@@ -65,6 +72,7 @@ export default function App() {
   const globePartialOverlay = document.querySelector(
     '.partial-overlay.globe-partial-overlay'
   );
+
   let firstPredefinedAnswer =
     'The longest river in the world is the Nile River. It flows through northeastern Africa and is approximately 6,650 kilometers (4,130 miles) long. I will show the Nile River on the map! Zoom it to get all the details!';
   let secondPredefinedAnswer =
@@ -95,9 +103,69 @@ export default function App() {
       layer: new LakeATLASPolygonColorLayer(),
       options: { category: 'overlay', enabled: false },
     },
-    'stars',
-    'atmosphere-day-night',
+    {
+      layer: 'atmosphere-day-night',
+      options: { category: 'overlay', enabled: true },
+    },
+    {
+      layer: 'stars',
+      options: { category: 'overlay', enabled: true },
+    },
   ];
+
+  const handleOnChange = (e) => {
+    if (step >= 6) {
+      setChatInput(e.target.value);
+    }
+  };
+
+  const answerKataraLLM = async (answerId) => {
+    try {
+      let answer = document.getElementById(answerId);
+
+      console.log(answer);
+      console.log(answerId);
+
+      if (answer !== null) {
+        answer.classList.add('selected-answers-box__answer--background');
+      }
+
+      wss.on('open', function open() {
+        wss.send('something');
+      });
+
+      // let history = [];
+
+      // app.submit(12, [chatInput, history]).on('data', (evt) => {
+      //   const updateQuestion = [...questions];
+      //   const indexQuestion = updateQuestion.findIndex(
+      //     (question) => question.id === answerId
+      //   );
+
+      //   updateQuestion[indexQuestion].answer = evt.data[0];
+
+      //   answer.innerHTML = evt.data[0];
+      // });
+
+      setChatInput('');
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleOnSubmit = async () => {
+    if (step >= 6) {
+      const newQuestion = {
+        id: `#question${uuidv4()}`,
+        question: chatInput,
+        answer: ' ',
+      };
+
+      newQuestion.id = newQuestion.id.replace(/-/gi, '');
+
+      setQuestions((previousQuestion) => [...previousQuestion, newQuestion]);
+    }
+  };
 
   const handleNextStep = (step) => {
     if (!step) {
@@ -108,9 +176,9 @@ export default function App() {
   };
 
   const chatAnswerAnimation = (answerId, answer) => {
-    let i = 0;
     let answerIdTemp = document.querySelector(`#${answerId}`);
 
+    let i = 0;
     const timerId = setInterval(() => {
       answerIdTemp.innerHTML += answer.charAt(i);
       i++;
@@ -118,6 +186,20 @@ export default function App() {
         clearInterval(timerId);
       }
     }, 40);
+  };
+
+  const updateZoom = () => {
+    const globeWWD = globeRef.current;
+
+    var wwd = globeWWD.wwd;
+
+    console.log(wwd);
+
+    wwd.keyboardControls.handleZoom('zoomIn');
+
+    setTimeout(() => {
+      wwd.keyboardControls.activeOperation = null;
+    }, 2000);
   };
 
   const handleSelectedQuestions = (answerNumber, answerId) => {
@@ -150,8 +232,6 @@ export default function App() {
   const handleShowLayer = (layerName) => {
     const indexLayer = findIndexLayer(layerName);
     globe.getLayers()[indexLayer].enabled = true;
-
-    console.log(globe);
   };
 
   const handleHideLayer = (layerName) => {
@@ -159,6 +239,17 @@ export default function App() {
 
     globe.getLayers()[indexLayer].enabled = false;
   };
+
+  useEffect(() => {
+    if (questions.length === 0) return;
+
+    localStorage.setItem('questions', JSON.stringify(questions));
+
+    const questionLength = questions.length - 1;
+    const question = questions[questionLength];
+
+    answerKataraLLM(question.id);
+  }, [questions]);
 
   useEffect(() => {
     setGlobe(globeRef.current);
@@ -212,6 +303,11 @@ export default function App() {
       new WorldWind.Location(coordinates.latitude, coordinates.longitude)
     );
   }, [coordinates]);
+
+  useEffect(() => {
+    let chat = document.getElementById('#chat');
+    chat.animate({ scrollTop: 1000 }, 3000);
+  }, []);
 
   return (
     <>
@@ -370,7 +466,7 @@ export default function App() {
               <div className='chat-wrapper__glass'>
                 <div className='chat-wrapper__container'>
                   <img className='logo' src={logo} />
-                  <div className='chat-content'>
+                  <div id='#chat' className='chat-content'>
                     {step < 6 ? (
                       <>
                         <div className='selected-questions-box'>
@@ -430,35 +526,29 @@ export default function App() {
                       </>
                     ) : (
                       <>
-                        {questions.map((data) => (
-                          <>
-                            <div className='selected-questions-box'>
-                              <div
-                                className='selected-questions-box__item'
-                                onClick={() =>
-                                  handleSelectedQuestions(
-                                    1,
-                                    'firstPredefinedAnswer'
-                                  )
-                                }
-                              >
-                                <div className='selected-questions-box__item__wrapper'>
-                                  <div className='selected-question-container'>
-                                    <p className='selected-question-container__text'>
-                                      {data}
-                                    </p>
+                        {questions.length > 0
+                          ? questions.map((data) => (
+                              <>
+                                <div className='selected-questions-box'>
+                                  <div className='selected-questions-box__item'>
+                                    <div className='selected-questions-box__item__wrapper'>
+                                      <div className='selected-question-container'>
+                                        <p className='selected-question-container__text'>
+                                          {data.question}
+                                        </p>
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            </div>
-                            <div className='selected-answers-box'>
-                              <p
-                                className='selected-answers-box__answer'
-                                id={answerId}
-                              ></p>
-                            </div>
-                          </>
-                        ))}
+                                <div className='selected-answers-box'>
+                                  <p
+                                    className='selected-answers-box__answer'
+                                    id={data.id}
+                                  ></p>
+                                </div>
+                              </>
+                            ))
+                          : ''}
                       </>
                     )}
                   </div>
@@ -500,6 +590,7 @@ export default function App() {
               <div
                 className='ui-actions-box__item'
                 data-action-text='Download as CSV: upcoming feature.'
+                onClick={() => updateZoom()}
               >
                 <a className='ui-actions-box__item__link'>
                   <img src={downloadIcon} />

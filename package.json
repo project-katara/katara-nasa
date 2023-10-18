@@ -10,16 +10,18 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "uuid": "^9.0.1",
+    "@gradio/client": "^0.5.1",
     "mobx": "^4.2.1",
     "mobx-react": "^5.1.2",
     "react": "^15.0.0 || ^16.0.0",
     "react-dom": "^15.0.0 || ^16.0.0",
+    "react-use-websocket": "^4.5.0",
+    "uuid": "^9.0.1",
     "worldwind-react-globe": "^1.2.0"
   },
   "devDependencies": {
     "@types/react": "^16.14.0",
-    "@types/react-dom": "^16.9.0", 
+    "@types/react-dom": "^16.9.0",
     "@vitejs/plugin-react": "^4.0.3",
     "eslint": "^8.45.0",
     "eslint-plugin-react": "^7.32.2",
