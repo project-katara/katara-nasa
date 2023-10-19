@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /*
  * Copyright (c) 2018 Bruce Schubert.
  * The MIT License
@@ -7,6 +8,7 @@
 import 'worldwindjs';
 import { v4 as uuidv4 } from 'uuid';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
+import { useQueryParam, StringParam } from 'use-query-params';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import Globe from 'worldwind-react-globe';
@@ -34,28 +36,30 @@ import LakeATLASPolygonColorLayer from './layers/LakeATLASPolygonColorLayer';
 
 export default function App() {
   const [socketUrl, setSocketUrl] = useState(
-    `${config.websocket.host}/${uuidv4()}`
+    `${config.websocket.host}/${uuidv4().replace(/-/g, '')}`
   );
   const [messageHistory, setMessageHistory] = useState([]);
   const [questions, setQuestions] = useState([]);
   const [chatInput, setChatInput] = useState('');
+  const [answerId, setAnswerId] = useState('');
+
   const [status, setStatus] = useState(true);
   const [step, setStep] = useState(0);
   const [globe, setGlobe] = useState(null);
+
   const [coordinates, setCoordinates] = useState({
     latitude: 34.2,
     longitude: -119.2,
   });
 
+  const [roomIdQueryParams, setRoomIdQueryParams] = useQueryParam(
+    'room',
+    StringParam
+  );
+
   const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl);
 
-  useEffect(() => {
-    if (lastMessage !== null) {
-      setMessageHistory((prev) => prev.concat(lastMessage));
-    }
-  }, [lastMessage, setMessageHistory]);
-
-  const handleClickSendMessage = useCallback(() => sendMessage('Hello'), []);
+  const globeRef = useRef();
 
   const connectionStatus = {
     [ReadyState.CONNECTING]: 'Connecting',
@@ -64,8 +68,6 @@ export default function App() {
     [ReadyState.CLOSED]: 'Closed',
     [ReadyState.UNINSTANTIATED]: 'Uninstantiated',
   }[readyState];
-
-  const globeRef = useRef();
 
   const popup = document.querySelector('.popup-component');
 
@@ -78,80 +80,50 @@ export default function App() {
   let secondPredefinedAnswer =
     'Climate change can cause more intense and frequent rainfall in some regions, leading to severe floods, while other areas may suffer from prolonged droughts due to reduced precipitation, impacting water availability for agriculture and communities! I can show to you the difference between the rainfalls 100 years ago and now to illustrate if you want to!';
 
-  const layers = [
-    {
-      layer: new HydroRIVERSColorLayer(),
-      options: { category: 'overlay', enabled: false },
-    },
-    {
-      layer: new HydroLAKESPolysColorLayer(),
-      options: { category: 'overlay', enabled: false },
-    },
-    {
-      layer: new BasinATLASColorLayer(),
-      options: { category: 'overlay', enabled: false },
-    },
-    {
-      layer: new GlobalRiverClassificationColorLayer(),
-      options: { category: 'overlay', enabled: false },
-    },
-    {
-      layer: new LakeATLASPntColorLayer(),
-      options: { category: 'overlay', enabled: false },
-    },
-    {
-      layer: new LakeATLASPolygonColorLayer(),
-      options: { category: 'overlay', enabled: false },
-    },
-    {
-      layer: 'atmosphere-day-night',
-      options: { category: 'overlay', enabled: true },
-    },
-    {
-      layer: 'stars',
-      options: { category: 'overlay', enabled: true },
-    },
-  ];
-
-  const handleOnChange = (e) => {
-    if (step >= 6) {
-      setChatInput(e.target.value);
-    }
-  };
-
   const answerKataraLLM = async (answerId) => {
-    try {
-      let answer = document.getElementById(answerId);
-
-      console.log(answer);
-      console.log(answerId);
-
-      if (answer !== null) {
-        answer.classList.add('selected-answers-box__answer--background');
-      }
-
-      wss.on('open', function open() {
-        wss.send('something');
-      });
-
-      // let history = [];
-
-      // app.submit(12, [chatInput, history]).on('data', (evt) => {
-      //   const updateQuestion = [...questions];
-      //   const indexQuestion = updateQuestion.findIndex(
-      //     (question) => question.id === answerId
-      //   );
-
-      //   updateQuestion[indexQuestion].answer = evt.data[0];
-
-      //   answer.innerHTML = evt.data[0];
-      // });
-
-      setChatInput('');
-    } catch (error) {
-      console.log(error);
-    }
+    setAnswerId(answerId);
   };
+
+  const chatAnswerAnimation = (answerId, answer, filter = 'selector') => {
+    let answerIdTemp =
+      filter === 'selector'
+        ? document.querySelector(`#${answerId}`)
+        : document.getElementById(`${answerId}`);
+
+    let i = 0;
+    const timerId = setInterval(() => {
+      answerIdTemp.innerHTML += answer.charAt(i);
+      i++;
+      if (i === answer.length) {
+        clearInterval(timerId);
+      }
+    }, 40);
+  };
+
+  const updateZoom = () => {
+    const globeWWD = globeRef.current;
+
+    var wwd = globeWWD.wwd;
+
+    wwd.keyboardControls.handleZoom('zoomIn');
+
+    setTimeout(() => {
+      wwd.keyboardControls.activeOperation = null;
+    }, 2000);
+  };
+
+  const findIndexLayer = (layerName) => {
+    const indexLayer = globe
+      .getLayers()
+      .findIndex((layer) => layer.displayName === layerName);
+
+    return indexLayer;
+  };
+
+  const handleClickSendMessage = useCallback(
+    (message) => sendMessage(message),
+    []
+  );
 
   const handleOnSubmit = async () => {
     if (step >= 6) {
@@ -175,35 +147,8 @@ export default function App() {
     }
   };
 
-  const chatAnswerAnimation = (answerId, answer) => {
-    let answerIdTemp = document.querySelector(`#${answerId}`);
-
-    let i = 0;
-    const timerId = setInterval(() => {
-      answerIdTemp.innerHTML += answer.charAt(i);
-      i++;
-      if (i === answer.length) {
-        clearInterval(timerId);
-      }
-    }, 40);
-  };
-
-  const updateZoom = () => {
-    const globeWWD = globeRef.current;
-
-    var wwd = globeWWD.wwd;
-
-    console.log(wwd);
-
-    wwd.keyboardControls.handleZoom('zoomIn');
-
-    setTimeout(() => {
-      wwd.keyboardControls.activeOperation = null;
-    }, 2000);
-  };
-
   const handleSelectedQuestions = (answerNumber, answerId) => {
-    let answer = document.querySelector('#' + `${answerId}`);
+    let answer = document.querySelector(`#${answerId}`);
 
     if (answer !== null) {
       answer.classList.add('selected-answers-box__answer--background');
@@ -221,12 +166,10 @@ export default function App() {
     }
   };
 
-  const findIndexLayer = (layerName) => {
-    const indexLayer = globe
-      .getLayers()
-      .findIndex((layer) => layer.displayName === layerName);
-
-    return indexLayer;
+  const handleOnChange = (e) => {
+    if (step >= 6) {
+      setChatInput(e.target.value);
+    }
   };
 
   const handleShowLayer = (layerName) => {
@@ -247,6 +190,16 @@ export default function App() {
 
     const questionLength = questions.length - 1;
     const question = questions[questionLength];
+
+    if (roomIdQueryParams !== '' && roomIdQueryParams !== undefined) {
+      try {
+        const message = JSON.parse(lastMessage.data);
+        chatAnswerAnimation(answerId, message.Answer, 'id');
+        setChatInput('');
+      } catch (error) {
+        console.log('error', error);
+      }
+    }
 
     answerKataraLLM(question.id);
   }, [questions]);
@@ -305,9 +258,109 @@ export default function App() {
   }, [coordinates]);
 
   useEffect(() => {
+    try {
+      if (answerId == '') return;
+
+      let answer = document.getElementById(answerId);
+
+      if (answer !== null) {
+        answer.classList.add('selected-answers-box__answer--background');
+      }
+
+      const updateQuestion = [...questions];
+      const indexQuestion = updateQuestion.findIndex(
+        (question) => question.id === answerId
+      );
+
+      handleClickSendMessage(chatInput);
+
+      updateQuestion[indexQuestion].answer = '';
+    } catch (error) {
+      console.log('error', error);
+    }
+  }, [answerId]);
+
+  useEffect(() => {
+    if (lastMessage !== null && chatInput !== '') {
+      setMessageHistory((prev) => prev.concat(lastMessage));
+
+      try {
+        const message = JSON.parse(lastMessage.data);
+
+        if (roomIdQueryParams !== '' && roomIdQueryParams !== undefined) {
+          setChatInput(message.Prompt);
+          const newQuestion = {
+            id: `#question${uuidv4()}`,
+            question: chatInput,
+            answer: ' ',
+          };
+
+          newQuestion.id = newQuestion.id.replace(/-/gi, '');
+
+          setQuestions((previousQuestion) => [
+            ...previousQuestion,
+            newQuestion,
+          ]);
+        } else {
+          chatAnswerAnimation(answerId, message.Answer, 'id');
+        }
+
+        setChatInput('');
+      } catch (error) {
+        console.log('error', error);
+      }
+    }
+  }, [lastMessage, setMessageHistory]);
+
+  useEffect(() => {
+    if (roomIdQueryParams !== '' && roomIdQueryParams !== undefined) {
+      console.log(roomIdQueryParams);
+      setSocketUrl(
+        `${config.websocket.host}/${roomIdQueryParams}/${uuidv4().replace(
+          /-/g,
+          ''
+        )}`
+      );
+    }
+
     let chat = document.getElementById('#chat');
     chat.animate({ scrollTop: 1000 }, 3000);
   }, []);
+
+  const layers = [
+    {
+      layer: new HydroRIVERSColorLayer(),
+      options: { category: 'overlay', enabled: false },
+    },
+    {
+      layer: new HydroLAKESPolysColorLayer(),
+      options: { category: 'overlay', enabled: false },
+    },
+    {
+      layer: new BasinATLASColorLayer(),
+      options: { category: 'overlay', enabled: false },
+    },
+    {
+      layer: new GlobalRiverClassificationColorLayer(),
+      options: { category: 'overlay', enabled: false },
+    },
+    {
+      layer: new LakeATLASPntColorLayer(),
+      options: { category: 'overlay', enabled: false },
+    },
+    {
+      layer: new LakeATLASPolygonColorLayer(),
+      options: { category: 'overlay', enabled: false },
+    },
+    {
+      layer: 'atmosphere-day-night',
+      options: { category: 'overlay', enabled: true },
+    },
+    {
+      layer: 'stars',
+      options: { category: 'overlay', enabled: true },
+    },
+  ];
 
   return (
     <>
@@ -528,7 +581,7 @@ export default function App() {
                       <>
                         {questions.length > 0
                           ? questions.map((data) => (
-                              <>
+                              <div key={data.id}>
                                 <div className='selected-questions-box'>
                                   <div className='selected-questions-box__item'>
                                     <div className='selected-questions-box__item__wrapper'>
@@ -546,7 +599,7 @@ export default function App() {
                                     id={data.id}
                                   ></p>
                                 </div>
-                              </>
+                              </div>
                             ))
                           : ''}
                       </>
