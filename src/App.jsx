@@ -43,6 +43,7 @@ export default function App() {
   const [chatInput, setChatInput] = useState('');
   const [answerId, setAnswerId] = useState('');
 
+  const [waitResponse, setWaitResponse] = useState(false);
   const [status, setStatus] = useState(true);
   const [step, setStep] = useState(0);
   const [globe, setGlobe] = useState(null);
@@ -80,11 +81,13 @@ export default function App() {
   let secondPredefinedAnswer =
     'Climate change can cause more intense and frequent rainfall in some regions, leading to severe floods, while other areas may suffer from prolonged droughts due to reduced precipitation, impacting water availability for agriculture and communities! I can show to you the difference between the rainfalls 100 years ago and now to illustrate if you want to!';
 
-  const answerKataraLLM = async (answerId) => {
-    setAnswerId(answerId);
-  };
-
   const chatAnswerAnimation = (answerId, answer, filter = 'selector') => {
+    if (answer === '' || answer === undefined) return;
+
+    console.log(answerId);
+    console.log(answer);
+    console.log(filter);
+
     let answerIdTemp =
       filter === 'selector'
         ? document.querySelector(`#${answerId}`)
@@ -127,6 +130,7 @@ export default function App() {
 
   const handleOnSubmit = async () => {
     if (step >= 6) {
+      setWaitResponse(true);
       const newQuestion = {
         id: `#question${uuidv4()}`,
         question: chatInput,
@@ -139,7 +143,11 @@ export default function App() {
     }
   };
 
-  const handleNextStep = (step) => {
+  const handleNextStep = (step, isRoom) => {
+    if (isRoom === true) {
+      const roomId = socketUrl.replace(`${config.websocket.host}/`, '');
+      setRoomIdQueryParams(roomId);
+    }
     if (!step) {
       setStep((current) => current + 1);
     } else {
@@ -186,22 +194,34 @@ export default function App() {
   useEffect(() => {
     if (questions.length === 0) return;
 
-    localStorage.setItem('questions', JSON.stringify(questions));
+    // const waitAnswer = questions.findIndex(
+    //   (question) => question.answer === ' '
+    // );
 
-    const questionLength = questions.length - 1;
-    const question = questions[questionLength];
+    if (waitResponse === true) {
+      localStorage.setItem('questions', JSON.stringify(questions));
 
-    if (roomIdQueryParams !== '' && roomIdQueryParams !== undefined) {
-      try {
-        const message = JSON.parse(lastMessage.data);
-        chatAnswerAnimation(answerId, message.Answer, 'id');
-        setChatInput('');
-      } catch (error) {
-        console.log('error', error);
+      const questionLength = questions.length - 1;
+      const question = questions[questionLength];
+      setAnswerId(question.id);
+      chatAnswerAnimation(question.id, '', 'id');
+    } else {
+      if (lastMessage) {
+        try {
+          const message = JSON.parse(lastMessage.data);
+          if (message['Answer'] !== undefined && message['Answer'] !== '') {
+            localStorage.setItem('questions', JSON.stringify(questions));
+
+            const questionLength = questions.length - 1;
+            const question = questions[questionLength];
+            chatAnswerAnimation(question.id, message.Answer, 'id');
+            setAnswerId(question.id);
+          }
+        } catch (error) {
+          console.log('error', error);
+        }
       }
     }
-
-    answerKataraLLM(question.id);
   }, [questions]);
 
   useEffect(() => {
@@ -267,32 +287,41 @@ export default function App() {
         answer.classList.add('selected-answers-box__answer--background');
       }
 
-      const updateQuestion = [...questions];
-      const indexQuestion = updateQuestion.findIndex(
-        (question) => question.id === answerId
-      );
+      if (waitResponse === true) {
+        const updateQuestion = [...questions];
+        const indexQuestion = updateQuestion.findIndex(
+          (question) => question.id === answerId
+        );
 
-      handleClickSendMessage(chatInput);
-
-      updateQuestion[indexQuestion].answer = '';
+        handleClickSendMessage(chatInput);
+        updateQuestion[indexQuestion].answer = '';
+        setChatInput('');
+      }
     } catch (error) {
       console.log('error', error);
     }
   }, [answerId]);
 
   useEffect(() => {
-    if (lastMessage !== null && chatInput !== '') {
-      setMessageHistory((prev) => prev.concat(lastMessage));
+    if (messageHistory.length === 0) return;
 
-      try {
-        const message = JSON.parse(lastMessage.data);
+    const lastIndex = messageHistory.length - 1;
+    const lastMessageHistory = messageHistory[lastIndex];
 
-        if (roomIdQueryParams !== '' && roomIdQueryParams !== undefined) {
-          setChatInput(message.Prompt);
+    try {
+      const message = JSON.parse(lastMessageHistory.data);
+
+      if (
+        roomIdQueryParams !== '' &&
+        roomIdQueryParams !== undefined &&
+        message['Answer'] !== undefined &&
+        message['Answer'] !== ''
+      ) {
+        if (waitResponse === false) {
           const newQuestion = {
             id: `#question${uuidv4()}`,
-            question: chatInput,
-            answer: ' ',
+            question: message.Prompt,
+            answer: message.Answer,
           };
 
           newQuestion.id = newQuestion.id.replace(/-/gi, '');
@@ -302,29 +331,40 @@ export default function App() {
             newQuestion,
           ]);
         } else {
-          chatAnswerAnimation(answerId, message.Answer, 'id');
-        }
+          const updateAnswerQuestion = [...questions];
+          updateAnswerQuestion[questions.length - 1].answer = message.Answer;
 
-        setChatInput('');
-      } catch (error) {
-        console.log('error', error);
+          setQuestions(updateAnswerQuestion);
+          setWaitResponse(false);
+        }
+      } else {
+        setWaitResponse(false);
+        chatAnswerAnimation(answerId, message.Answer, 'id');
       }
+
+      setChatInput('');
+    } catch (error) {
+      console.log('error', error);
     }
-  }, [lastMessage, setMessageHistory]);
+  }, [messageHistory]);
+
+  useEffect(() => {
+    if (lastMessage !== null) {
+      setMessageHistory((prev) => prev.concat(lastMessage));
+    }
+  }, [lastMessage]);
 
   useEffect(() => {
     if (roomIdQueryParams !== '' && roomIdQueryParams !== undefined) {
-      console.log(roomIdQueryParams);
       setSocketUrl(
         `${config.websocket.host}/${roomIdQueryParams}/${uuidv4().replace(
           /-/g,
           ''
         )}`
       );
-    }
 
-    let chat = document.getElementById('#chat');
-    chat.animate({ scrollTop: 1000 }, 3000);
+      setStep(1);
+    }
   }, []);
 
   const layers = [
@@ -388,7 +428,7 @@ export default function App() {
                           <img
                             src={student}
                             className='user-type-box__item__img'
-                            onClick={() => handleNextStep()}
+                            onClick={() => handleNextStep('', false)}
                           />
                         </div>
                         <div className='user-type-box__item'>
@@ -396,7 +436,7 @@ export default function App() {
                           <img
                             src={teacher}
                             className='user-type-box__item__img'
-                            onClick={() => handleNextStep()}
+                            onClick={() => handleNextStep('', true)}
                           />
                         </div>
                       </div>
