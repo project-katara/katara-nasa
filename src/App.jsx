@@ -84,9 +84,7 @@ export default function App() {
   const chatAnswerAnimation = (answerId, answer, filter = 'selector') => {
     if (answer === '' || answer === undefined) return;
 
-    console.log(answerId);
-    console.log(answer);
-    console.log(filter);
+    const addBreakLineAnswer = answer.replace(/\n/gi, '\n\n');
 
     let answerIdTemp =
       filter === 'selector'
@@ -95,9 +93,9 @@ export default function App() {
 
     let i = 0;
     const timerId = setInterval(() => {
-      answerIdTemp.innerHTML += answer.charAt(i);
+      answerIdTemp.innerHTML += addBreakLineAnswer.charAt(i);
       i++;
-      if (i === answer.length) {
+      if (i === addBreakLineAnswer.length) {
         clearInterval(timerId);
       }
     }, 40);

@@ -225,6 +225,7 @@ button {
 
 .selected-answers-box__answer {
   transition: ease-in-out 0.4s;
+  white-space: pre-line;
 }
 
 .selected-answers-box__answer--background {
