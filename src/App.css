@@ -127,8 +127,11 @@ button {
 }
 
 .chat-content {
+  display: flex;
+  flex-direction: column-reverse;
+  max-height: 100%;
   max-width: 450px;
-  overflow-y: auto;
+  overflow: auto;
   width: 100%;
 }
 
