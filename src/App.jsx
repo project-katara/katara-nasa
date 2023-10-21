@@ -288,8 +288,6 @@ export default function App() {
         answer.classList.add("selected-answers-box__answer--background");
       }
 
-      console.log(answer.innerHTML);
-
       if (answer.innerHTML == null || answer.innerHTML == "") {
         answer.classList.add("selected-answers-box__answer--loading");
       }
