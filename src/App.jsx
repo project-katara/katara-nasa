@@ -91,6 +91,9 @@ export default function App() {
         ? document.querySelector(`#${answerId}`)
         : document.getElementById(`${answerId}`);
 
+    document
+      .getElementById(`${answerId}`)
+      .classList.remove("selected-answers-box__answer--loading");
     let i = 0;
     const timerId = setInterval(() => {
       answerIdTemp.innerHTML += addBreakLineAnswer.charAt(i);
@@ -283,6 +286,12 @@ export default function App() {
 
       if (answer !== null) {
         answer.classList.add("selected-answers-box__answer--background");
+      }
+
+      console.log(answer.innerHTML);
+
+      if (answer.innerHTML == null || answer.innerHTML == "") {
+        answer.classList.add("selected-answers-box__answer--loading");
       }
 
       if (waitResponse === true) {
@@ -626,9 +635,14 @@ export default function App() {
                                     </div>
                                   </div>
                                   <div className="selected-answers-box">
-                                    <p
-                                      className="selected-answers-box__answer"
-                                      id={data.id}></p>
+                                    <p className="selected-answers-box__answer">
+                                      <span
+                                        className="answer-content"
+                                        id={data.id}></span>
+                                      <span className="dot-flashing-wrapper">
+                                        <span className="dot-flashing"></span>
+                                      </span>
+                                    </p>
                                   </div>
                                 </div>
                               ))

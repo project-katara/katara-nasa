@@ -146,6 +146,76 @@ button {
   background: transparent;
 }
 
+/* Loading answer animation START */
+
+/**
+ * ==============================================
+ * Dot Flashing
+ * ==============================================
+ */
+
+.dot-flashing-wrapper {
+  display: none;
+  left: 30px;
+  position: absolute;
+  top: 12px;
+}
+
+.selected-answers-box__answer--loading + .dot-flashing-wrapper {
+  display: block;
+}
+
+.dot-flashing {
+  position: relative;
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #86aaff;
+  color: #86aaff;
+  animation: dot-flashing 1s infinite linear alternate;
+  animation-delay: 0.5s;
+}
+.dot-flashing::before,
+.dot-flashing::after {
+  content: "";
+  display: inline-block;
+  position: absolute;
+  top: 0;
+}
+.dot-flashing::before {
+  left: -15px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #86aaff;
+  color: #86aaff;
+  animation: dot-flashing 1s infinite alternate;
+  animation-delay: 0s;
+}
+.dot-flashing::after {
+  left: 15px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #86aaff;
+  color: #86aaff;
+  animation: dot-flashing 1s infinite alternate;
+  animation-delay: 1s;
+}
+
+@keyframes dot-flashing {
+  0% {
+    background-color: #86aaff;
+  }
+  50%,
+  100% {
+    background-color: rgba(128, 149, 255, 0.288);
+  }
+}
+
+/* Loading answer animation END */
+
 .chat-wrapper__container {
   align-items: center;
   display: flex;
@@ -157,6 +227,10 @@ button {
 .selected-answers-box {
   opacity: 1;
   transition: ease-in-out 0.3s;
+}
+
+.answer-content {
+  display: block;
 }
 
 .logo {
@@ -227,6 +301,7 @@ button {
 }
 
 .selected-answers-box__answer {
+  position: relative;
   transition: ease-in-out 0.4s;
   white-space: pre-line;
 }
