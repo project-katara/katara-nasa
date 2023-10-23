@@ -34,7 +34,10 @@ import GlobalRiverClassificationColorLayer from "./layers/GlobalRiverClassificat
 import LakeATLASPntColorLayer from "./layers/LakeATLASPointColorLayer";
 import LakeATLASPolygonColorLayer from "./layers/LakeATLASPolygonColorLayer";
 
+import useWindowDimensions from './hooks/useWindowDimensions';
+
 export default function App() {
+  const { height, width } = useWindowDimensions();
   const [socketUrl, setSocketUrl] = useState(
     `${config.websocket.host}/${uuidv4().replace(/-/g, "")}`
   );
@@ -47,6 +50,7 @@ export default function App() {
   const [status, setStatus] = useState(true);
   const [step, setStep] = useState(0);
   const [globe, setGlobe] = useState(null);
+  const [isGlobeHidden, setIsGlobeHidden] = useState(false)
 
   const [coordinates, setCoordinates] = useState({
     latitude: 34.2,
@@ -144,17 +148,33 @@ export default function App() {
     }
   };
 
-  const handleNextStep = (step, isRoom) => {
+  const handleNextStep = (step, isRoom, windowWidth) => {
     if (isRoom === true) {
       const roomId = socketUrl.replace(`${config.websocket.host}/`, "");
       setRoomIdQueryParams(roomId);
     }
-    if (!step) {
-      setStep((current) => current + 1);
-    } else {
+
+    if (windowWidth < 1024 && !step) {
       setStep(6);
+    } else {
+      if (!step) {
+        setStep((current) => current + 1);
+      } else {
+        setStep(6);
+      }
     }
   };
+
+  const handleGlobeState = () => {
+    const GlobeWrapper = document.querySelector(".fullscreen")
+    setIsGlobeHidden(!isGlobeHidden)
+    if (isGlobeHidden) {
+      GlobeWrapper.classList.remove("fullscreen--hidden")
+    } else {
+      GlobeWrapper.classList.add("fullscreen--hidden")
+    }
+    
+  }
 
   const handleSelectedQuestions = (answerNumber, answerId) => {
     let answer = document.querySelector(`#${answerId}`);
@@ -245,7 +265,7 @@ export default function App() {
   }, [globeRef]);
 
   useEffect(() => {
-    if (step === 2) {
+    if (step === 2 || step === 6) {
       setStatus(false);
     }
 
@@ -433,7 +453,7 @@ export default function App() {
                           <img
                             src={student}
                             className="user-type-box__item__img"
-                            onClick={() => handleNextStep("", false)}
+                            onClick={() => handleNextStep("", false, width)}
                           />
                         </div>
                         <div className="user-type-box__item">
@@ -441,7 +461,7 @@ export default function App() {
                           <img
                             src={teacher}
                             className="user-type-box__item__img"
-                            onClick={() => handleNextStep("", true)}
+                            onClick={() => handleNextStep("", true, width)}
                           />
                         </div>
                       </div>
@@ -558,6 +578,21 @@ export default function App() {
           <div className="chat-component">
             {step === 2 ? <div className="partial-overlay"></div> : ""}
             <div className="chat-wrapper">
+            {step >= 6 ? (
+              <div className="globe-state-box">
+                <p>Globe display</p>
+                <div
+                  className="button-wrapper button-wrapper--globe-state button-wrapper--show-globe"
+                  onClick={() => handleGlobeState()}>
+                  <div className="button-wrapper__container">
+                    <button className="button-container__item">
+                      Show globe
+                    </button>
+                  </div>
+                </div>
+              </div>
+             
+            ) : ("")}
               <div className="chat-wrapper__glass">
                 <div className="chat-wrapper__container">
                   <img className="logo" src={logo} />
@@ -682,6 +717,21 @@ export default function App() {
             </div>
           </div>
           <div className="fullscreen">
+            {step >= 6 ? (
+              <div className="globe-state-box globe-state-box--hide-globe">
+                <p>Globe display</p>
+                <div
+                  className="button-wrapper button-wrapper--globe-state button-wrapper--hide-globe"
+                  onClick={() => handleGlobeState()}>
+                  <div className="button-wrapper__container">
+                    <button className="button-container__item">
+                      Hide globe
+                    </button>
+                  </div>
+                </div>
+              </div>
+             
+            ) : ("")}
             <div className="ui-actions-box">
               <div
                 className="ui-actions-box__item"
