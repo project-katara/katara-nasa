@@ -34,7 +34,7 @@ import GlobalRiverClassificationColorLayer from "./layers/GlobalRiverClassificat
 import LakeATLASPntColorLayer from "./layers/LakeATLASPointColorLayer";
 import LakeATLASPolygonColorLayer from "./layers/LakeATLASPolygonColorLayer";
 
-import useWindowDimensions from './hooks/useWindowDimensions';
+import useWindowDimensions from "./hooks/useWindowDimensions";
 
 export default function App() {
   const { height, width } = useWindowDimensions();
@@ -50,7 +50,9 @@ export default function App() {
   const [status, setStatus] = useState(true);
   const [step, setStep] = useState(0);
   const [globe, setGlobe] = useState(null);
-  const [isGlobeHidden, setIsGlobeHidden] = useState(false)
+  const [isGlobeHidden, setIsGlobeHidden] = useState(false);
+
+  const [isTeacherUser, setIsTeacherUser] = useState(false);
 
   const [coordinates, setCoordinates] = useState({
     latitude: 34.2,
@@ -166,15 +168,14 @@ export default function App() {
   };
 
   const handleGlobeState = () => {
-    const GlobeWrapper = document.querySelector(".fullscreen")
-    setIsGlobeHidden(!isGlobeHidden)
+    const GlobeWrapper = document.querySelector(".fullscreen");
+    setIsGlobeHidden(!isGlobeHidden);
     if (isGlobeHidden) {
-      GlobeWrapper.classList.remove("fullscreen--hidden")
+      GlobeWrapper.classList.remove("fullscreen--hidden");
     } else {
-      GlobeWrapper.classList.add("fullscreen--hidden")
+      GlobeWrapper.classList.add("fullscreen--hidden");
     }
-    
-  }
+  };
 
   const handleSelectedQuestions = (answerNumber, answerId) => {
     let answer = document.querySelector(`#${answerId}`);
@@ -392,6 +393,10 @@ export default function App() {
     }
   }, []);
 
+  useEffect(() => {
+    setStatus(true);
+  }, [isTeacherUser]);
+
   const layers = [
     {
       layer: new HydroRIVERSColorLayer(),
@@ -461,13 +466,41 @@ export default function App() {
                           <img
                             src={teacher}
                             className="user-type-box__item__img"
-                            onClick={() => handleNextStep("", true, width)}
+                            onClick={() => {
+                              handleNextStep("", true, width);
+                              setIsTeacherUser(true);
+                            }}
                           />
                         </div>
                       </div>
                     </>
                   )}
-                  {step == 1 && (
+                  {step == 1 && isTeacherUser === true && (
+                    <>
+                      <div className="modal-content__header">
+                        <h2 className="modal-content__title">
+                          You are now in a class room!
+                        </h2>
+                        <p className="modal-content__description">
+                          You can share the link of this page to your students
+                          and you can all colaborate! The idea is to have a
+                          collaborative space and to watch together Katara's
+                          answers. Now we'll guide you through all Katara's
+                          features.
+                        </p>
+                      </div>
+                      <div
+                        className="button-wrapper"
+                        onClick={() => handleNextStep()}>
+                        <div className="button-wrapper__container">
+                          <button className="button-container__item">
+                            Follow tutorial
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                  {step == 1 && isTeacherUser === false && (
                     <>
                       <div className="modal-content__header">
                         <h2 className="modal-content__title">
@@ -578,21 +611,22 @@ export default function App() {
           <div className="chat-component">
             {step === 2 ? <div className="partial-overlay"></div> : ""}
             <div className="chat-wrapper">
-            {step >= 6 ? (
-              <div className="globe-state-box">
-                <p>Globe display</p>
-                <div
-                  className="button-wrapper button-wrapper--globe-state button-wrapper--show-globe"
-                  onClick={() => handleGlobeState()}>
-                  <div className="button-wrapper__container">
-                    <button className="button-container__item">
-                      Show globe
-                    </button>
+              {step >= 6 ? (
+                <div className="globe-state-box">
+                  <p>Globe display</p>
+                  <div
+                    className="button-wrapper button-wrapper--globe-state button-wrapper--show-globe"
+                    onClick={() => handleGlobeState()}>
+                    <div className="button-wrapper__container">
+                      <button className="button-container__item">
+                        Show globe
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-             
-            ) : ("")}
+              ) : (
+                ""
+              )}
               <div className="chat-wrapper__glass">
                 <div className="chat-wrapper__container">
                   <img className="logo" src={logo} />
@@ -730,8 +764,9 @@ export default function App() {
                   </div>
                 </div>
               </div>
-             
-            ) : ("")}
+            ) : (
+              ""
+            )}
             <div className="ui-actions-box">
               <div
                 className="ui-actions-box__item"

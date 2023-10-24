@@ -4,7 +4,8 @@
   padding: 0;
 }
 
-html, body {
+html,
+body {
   min-height: 100vh;
   width: 100%;
 }
@@ -13,7 +14,12 @@ html, body {
   height: 100vh;
 }
 
-body, button, a, p, h1, h2 {
+body,
+button,
+a,
+p,
+h1,
+h2 {
   color: #fff;
 }
 
@@ -457,7 +463,7 @@ button {
 
 .modal-content__title {
   font-size: 50px;
-  margin: 0 0 20px;
+  margin: 0 0 10px;
 }
 
 .modal-content__description {
@@ -497,14 +503,13 @@ button {
 
 .button-wrapper--skip-tutorial,
 .button-wrapper--globe-state {
-  
   position: absolute;
   z-index: 30;
 }
 
 .button-wrapper--skip-tutorial {
- left: 20px;
- bottom: 20px;
+  left: 20px;
+  bottom: 20px;
 }
 
 .button-wrapper--show-globe,
@@ -740,7 +745,6 @@ a {
 }
 
 .map-status-box__button {
-
 }
 
 /* Hide & show map END */
@@ -781,11 +785,11 @@ a {
     backdrop-filter: blur(1px);
     border: 1px solid #4e6da7;
   }
-  
+
   .globe-state-box p {
     margin: 0 15px 0 0;
   }
-  
+
   .globe-state-box button,
   .globe-state-box p {
     font-size: 16px;
@@ -860,4 +864,3 @@ a {
     z-index: 30;
   }
 }
-
