@@ -443,6 +443,49 @@ button {
   width: 100%;
 }
 
+
+.modal-content__input-box {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  margin: 12px 0;
+  width: 100%;
+}
+
+.modal-content__input {
+  background: rgb(28 40 85 / 35%);
+  border: 1px solid transparent;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 6px;
+  color: #fff;
+  outline: none;
+}
+
+.modal-content__button-wrapper {
+  background: var(--popup-button-border, linear-gradient(-45deg, #4862c0 2.93%, #5e7bf0 99.67%));
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 1px;
+  margin: 0 0 0 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content__button {
+  border-radius: 5px;
+  border: 0 solid;
+  background: linear-gradient(180deg, #233371 0%, #101C4A 100%);
+  box-shadow: 2px 4px 12px 0px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  padding: 8px;
+}
+
+.modal-content__button svg {
+  fill: #b4d3ff;
+}
+
 .global-overlay {
   align-items: center;
   background: rgba(12, 24, 48, 0.76);
