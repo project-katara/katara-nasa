@@ -6,4 +6,12 @@ import chartIcon from './icon_tutorial_chart.png';
 import downloadIcon from './icon_tutorial_download.png';
 import pinIcon from './pin.png';
 
-export { student, teacher, logo, starIcon, chartIcon, downloadIcon, pinIcon };
+export {
+  student,
+  teacher,
+  logo,
+  starIcon,
+  chartIcon,
+  downloadIcon,
+  pinIcon,
+};

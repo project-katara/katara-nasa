@@ -34,6 +34,8 @@ import BasinATLASColorLayer from './layers/BasinATLASColorLayer';
 import GlobalRiverClassificationColorLayer from './layers/GlobalRiverClassificationColorLayer';
 import LakeATLASPntColorLayer from './layers/LakeATLASPointColorLayer';
 import LakeATLASPolygonColorLayer from './layers/LakeATLASPolygonColorLayer';
+import TerrestrisLayer from './layers/TerrestrisLayer';
+import GEBCOLayer from './layers/GEBCOLayer';
 
 export default function App() {
   const [socketUrl, setSocketUrl] = useState(
@@ -48,13 +50,7 @@ export default function App() {
   const [status, setStatus] = useState(true);
   const [step, setStep] = useState(0);
   const [globe, setGlobe] = useState(null);
-  const [pickMap, setPickMap] = useState([
-    // {
-    //   name: 'nilo',
-    //   latitude: 34.2,
-    //   longitude: -119.2,
-    // },
-  ]);
+  const [pickMap, setPickMap] = useState([]); // { name: 'nilo', latitude: 34.2, longitude: -119.2},
 
   const [coordinates, setCoordinates] = useState({
     latitude: 34.2,
@@ -161,7 +157,13 @@ export default function App() {
     if (!step) {
       setStep((current) => current + 1);
     } else {
+      handleHideLayer('HydroRIVERS_v10');
+      handleHideLayer('OSM-WMS');
+      handleHideLayer('HydroLAKES_polys_v10');
+
+      console.log(pickMap);
       removePick(pickMap);
+
       setStep(6);
     }
   };
@@ -175,14 +177,15 @@ export default function App() {
 
     if (answerNumber === 1) {
       handleShowLayer('HydroRIVERS_v10');
+      handleShowLayer('OSM-WMS');
       setCoordinates({ latitude: 29.533438, longitude: 31.270695 });
-      setPickMap([{ name: 'Nilo', latitude: 29.533438, longitude: 31.270695 }]);
+      setPickMap([{ name: 'Nile', latitude: 29.533438, longitude: 31.270695 }]);
       chatAnswerAnimation('firstPredefinedAnswer', firstPredefinedAnswer);
     } else if (answerNumber === 2) {
+      removePick(pickMap);
       handleHideLayer('HydroRIVERS_v10');
-      handleShowLayer('LakeATLAS_v10_pol');
+      handleShowLayer('HydroLAKES_polys_v10');
       setCoordinates({ latitude: -23.5489, longitude: -46.6388 });
-      setPickMap([{ name: 'Nilo', latitude: -23.5489, longitude: -46.6388 }]);
       chatAnswerAnimation('secondPredefinedAnswer', secondPredefinedAnswer);
     }
   };
@@ -237,19 +240,22 @@ export default function App() {
     }
   }, [questions]);
 
-  const removePick = (layers) => {
-    // const indexLayer = findIndexLayer(name);
+  const removePick = (layersPick) => {
     const globeWWD = globeRef.current;
     const wwd = globeWWD.wwd;
     const layersGlobe = wwd.layers;
 
-    console.log(layersGlobe);
-    for (let i = 0; i < layers.length; i++) {
-      const layer = layers[i];
+    for (let i = 0; i < layersPick.length; i++) {
+      const layerPick = layersPick[i];
 
-      const wwdLayer = layersGlobe.map(wwd);
+      for (let j = 0; j < layersGlobe.length; j++) {
+        const layer = layersGlobe[j];
+
+        if (layer.displayName == layerPick.name) {
+          handleHideLayer(layerPick.name);
+        }
+      }
     }
-    console.log(layers);
   };
 
   const addPick = (name, latitude, longitude) => {
@@ -496,11 +502,19 @@ export default function App() {
       options: { category: 'overlay', enabled: false },
     },
     {
-      layer: 'atmosphere-day-night',
-      options: { category: 'overlay', enabled: true },
+      layer: new TerrestrisLayer(),
+      options: { category: 'background', enabled: false },
+    },
+    {
+      layer: new GEBCOLayer(),
+      options: { category: 'background', enabled: true },
     },
     {
       layer: 'stars',
+      options: { category: 'overlay', enabled: true },
+    },
+    {
+      layer: 'atmosphere-day-night',
       options: { category: 'overlay', enabled: true },
     },
   ];
@@ -831,7 +845,7 @@ export default function App() {
               layers={layers}
               latitude={coordinates.latitude}
               longitude={coordinates.longitude}
-              altitude={10e6}
+              // altitude={10e6}
             />
           </div>
         </div>
