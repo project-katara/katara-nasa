@@ -755,9 +755,9 @@ a {
 }
 
 .layers-control-box {
-  left: 20px;
+  left: 15px;
   position: absolute;
-  top: 20px;
+  top: 10px;
 }
 
 .layer-selection-item {
