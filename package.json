@@ -10,6 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.14.15",
     "mobx": "^4.2.1",
     "mobx-react": "^5.1.2",
     "react": "^15.0.0 || ^16.0.0",

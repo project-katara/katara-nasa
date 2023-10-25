@@ -662,6 +662,7 @@ a {
 
 .popup-button-wrapper__item {
   background: linear-gradient(180deg, #162355 0%, #101c4a 100%);
+  color: #fff;
   font-size: 18px;
   font-weight: 600;
   padding: 10px 20px;
@@ -751,6 +752,54 @@ a {
 
 .globe-state-box {
   display: none;
+}
+
+.layers-control-box {
+  left: 20px;
+  position: absolute;
+  top: 20px;
+}
+
+.layer-selection-item {
+  background: linear-gradient(
+      180deg,
+      #223374 0%,
+      #17255b 21.46%,
+      #152254 34.83%,
+      #101c4a 100%
+    ),
+    #d9d9d9;
+  color: #fff;
+}
+
+.layers-control-box__form > div {
+  border-radius: 12px;
+}
+
+.layers-control-box__form > div > div:first-child,
+.layers-control-box__form > div > div:first-child:hover {
+  background: linear-gradient(
+      180deg,
+      #223374 0%,
+      #17255b 21.46%,
+      #152254 34.83%,
+      #101c4a 100%
+    ),
+    #d9d9d9;
+  border: 2px solid #3f5192;
+  border-radius: 12px;
+  color: #fff;
+}
+
+.layers-control-box__form > div > input,
+.layers-control-box__form > div > input:focus {
+  border: 1px solid #7d97f5;
+  color: #fff;
+  outline: 0;
+}
+
+.layers-control-box__form > div > svg {
+  fill: #bac1ff;
 }
 
 @media (max-width: 1024px) {

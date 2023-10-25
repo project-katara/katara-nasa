@@ -7,6 +7,10 @@
 
 import "worldwindjs";
 import { v4 as uuidv4 } from "uuid";
+import MenuItem from "@mui/material/MenuItem";
+import FormHelperText from "@mui/material/FormHelperText";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import { useQueryParam, StringParam } from "use-query-params";
 
@@ -45,6 +49,7 @@ export default function App() {
   const [questions, setQuestions] = useState([]);
   const [chatInput, setChatInput] = useState("");
   const [answerId, setAnswerId] = useState("");
+  const [choosenLayer, setChoosenLayer] = useState("");
 
   const [waitResponse, setWaitResponse] = useState(false);
   const [status, setStatus] = useState(true);
@@ -86,6 +91,10 @@ export default function App() {
     "The longest river in the world is the Nile River. It flows through northeastern Africa and is approximately 6,650 kilometers (4,130 miles) long. I will show the Nile River on the map! Zoom it to get all the details!";
   let secondPredefinedAnswer =
     "Climate change can cause more intense and frequent rainfall in some regions, leading to severe floods, while other areas may suffer from prolonged droughts due to reduced precipitation, impacting water availability for agriculture and communities! I can show to you the difference between the rainfalls 100 years ago and now to illustrate if you want to!";
+
+  const handleChange = (event) => {
+    setChoosenLayer(event.target.value);
+  };
 
   const chatAnswerAnimation = (answerId, answer, filter = "selector") => {
     if (answer === "" || answer === undefined) return;
@@ -752,18 +761,42 @@ export default function App() {
           </div>
           <div className="fullscreen">
             {step >= 6 ? (
-              <div className="globe-state-box globe-state-box--hide-globe">
-                <p>Globe display</p>
-                <div
-                  className="button-wrapper button-wrapper--globe-state button-wrapper--hide-globe"
-                  onClick={() => handleGlobeState()}>
-                  <div className="button-wrapper__container">
-                    <button className="button-container__item">
-                      Hide globe
-                    </button>
+              <>
+                <div className="layers-control-box">
+                  <FormControl
+                    className="layers-control-box__form"
+                    sx={{ m: 1, minWidth: 120 }}>
+                    <Select
+                      value={choosenLayer}
+                      onChange={handleChange}
+                      displayEmpty
+                      inputProps={{ "aria-label": "Without label" }}>
+                      <MenuItem id="layer-selection-item" value="">
+                        <em>Default</em>
+                      </MenuItem>
+                      <MenuItem id="layer-selection-item" value={10}>
+                        Rivers
+                      </MenuItem>
+                      <MenuItem id="layer-selection-item" value={20}>
+                        Lakes
+                      </MenuItem>
+                    </Select>
+                    {/* <FormHelperText>Select a map layer!</FormHelperText> */}
+                  </FormControl>
+                </div>
+                <div className="globe-state-box globe-state-box--hide-globe">
+                  <p>Globe display</p>
+                  <div
+                    className="button-wrapper button-wrapper--globe-state button-wrapper--hide-globe"
+                    onClick={() => handleGlobeState()}>
+                    <div className="button-wrapper__container">
+                      <button className="button-container__item">
+                        Hide globe
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </>
             ) : (
               ""
             )}
