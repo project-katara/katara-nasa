@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react-hooks/exhaustive-deps */
 /*
  * Copyright (c) 2018 Bruce Schubert.
@@ -164,13 +165,13 @@ export default function App() {
     }
   };
 
-  const handleNextStep = (step, isRoom, windowWidth) => {
+  const handleNextStep = (step, isRoom) => {
     if (isRoom === true) {
       const roomId = socketUrl.replace(`${config.websocket.host}/`, '');
       setRoomIdQueryParams(roomId);
     }
 
-    if (windowWidth < 1024 && !step) {
+    if (width < 1024 && !step) {
       setStep(6);
     } else {
       if (!step) {
@@ -403,6 +404,7 @@ export default function App() {
       handleHideLayer('OSM-WMS');
       handleHideLayer('HydroLAKES_polys_v10');
       handleShowLayer('GEBCO_LATEST');
+      removePick(pickMap);
     }
   }, [step]);
 
@@ -585,7 +587,7 @@ export default function App() {
                           <img
                             src={student}
                             className='user-type-box__item__img'
-                            onClick={() => handleNextStep('', false, width)}
+                            onClick={() => handleNextStep('', false)}
                           />
                         </div>
                         <div className='user-type-box__item'>
@@ -594,7 +596,7 @@ export default function App() {
                             src={teacher}
                             className='user-type-box__item__img'
                             onClick={() => {
-                              handleNextStep('', true, width);
+                              handleNextStep('', true);
                               setIsTeacherUser(true);
                             }}
                           />
@@ -610,7 +612,7 @@ export default function App() {
                         </h2>
                         <p className='modal-content__description'>
                           You can share the link of this page to your students
-                          and you can all colaborate! The idea is to have a
+                          and you can all collaborate! The idea is to have a
                           collaborative space and to watch together Katara's
                           answers.
                         </p>
@@ -662,10 +664,17 @@ export default function App() {
                         <h2 className='modal-content__title'>
                           Nice to have you!
                         </h2>
-                        <p className='modal-content__description'>
-                          We have a ready to go tutorial for you. We'll guide
-                          you through all Katara's features.
-                        </p>
+                        {width > 1024 ? (
+                          <p className='modal-content__description'>
+                            We have a ready to go tutorial for you. We'll guide
+                            you through all Katara's features.
+                          </p>
+                        ) : (
+                          <p className='modal-content__description'>
+                            We've set up the best environment for your device
+                            and now you can use all of Katara's features.
+                          </p>
+                        )}
                       </div>
 
                       <div
@@ -674,7 +683,11 @@ export default function App() {
                       >
                         <div className='button-wrapper__container'>
                           <button className='button-container__item'>
-                            Follow tutorial
+                            {`${
+                              width > 1024
+                                ? 'Follow tutorial'
+                                : 'Explorer of the globe'
+                            }`}
                           </button>
                         </div>
                       </div>
