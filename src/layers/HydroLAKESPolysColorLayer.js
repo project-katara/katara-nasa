@@ -20,17 +20,17 @@ export default class WaterColorLayer extends WorldWind.WmsLayer {
    */
   constructor() {
     let cfg = {
-      title: "HydroLAKES_polys_v10",
-      version: "1.3.0",
-      service: "https://maps.katara.earth/geoserver/ows?",
-      layerNames: "ne:HydroLAKES_polys_v10",
+      title: 'HydroLAKES_points_v10',
+      version: '1.3.0',
+      service: 'https://maps.katara.earth/geoserver/ows?',
+      layerNames: 'ne:HydroLAKES_polys_v10',
       sector: new WorldWind.Sector(-90.0, 90.0, -180, 180),
       levelZeroDelta: new WorldWind.Location(180, 180),
       numLevels: 15,
-      format: "image/png",
+      format: 'image/png',
       size: 128,
-      coordinateSystem: "EPSG:4326", // optional
-      styleNames: "", // (optional): {String} A comma separated list of the styles to include in this layer.</li>
+      coordinateSystem: 'EPSG:4326', // optional
+      styleNames: '', // (optional): {String} A comma separated list of the styles to include in this layer.</li>
     };
     super(cfg);
 

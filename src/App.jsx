@@ -51,7 +51,7 @@ export default function App() {
   );
   const [messageHistory, setMessageHistory] = useState([]);
   const [questions, setQuestions] = useState([]);
-  const [choosenLayer, setChoosenLayer] = useState('');
+  const [chosenLayer, setChosenLayer] = useState('GEBCO_LATEST');
   const [chatInput, setChatInput] = useState('');
   const [answerId, setAnswerId] = useState('');
 
@@ -63,6 +63,16 @@ export default function App() {
 
   const [isTeacherUser, setIsTeacherUser] = useState(false);
   const [pickMap, setPickMap] = useState([]); // { name: 'nilo', latitude: 34.2, longitude: -119.2},
+  const [menuLayers, setMenuLayers] = useState([
+    // { name: 'Basin', value: 'BasinATLAS_v10' },
+    { name: 'GEBCO', value: 'GEBCO_LATEST' },
+    { name: 'Gloric', value: 'GloRiC_v10' },
+    { name: 'Lakes', value: 'HydroLAKES_polys_v10' },
+    { name: 'Rivers', value: 'HydroRIVERS_v10' },
+    // { name: 'LAKE Point', value: 'LakeATLAS_v10_pnt' },
+    // { name: 'LAKE Polygon', value: 'LakeATLAS_v10_pol' },
+    { name: 'OMS', value: 'OSM-WMS' },
+  ]);
 
   const [coordinates, setCoordinates] = useState({
     latitude: 34.2,
@@ -77,6 +87,49 @@ export default function App() {
   const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl);
 
   const globeRef = useRef();
+
+  const layers = [
+    {
+      layer: new HydroRIVERSColorLayer(),
+      options: { category: 'overlay', enabled: false },
+    },
+    {
+      layer: new HydroLAKESPolysColorLayer(),
+      options: { category: 'overlay', enabled: false },
+    },
+    {
+      layer: new BasinATLASColorLayer(),
+      options: { category: 'overlay', enabled: false },
+    },
+    {
+      layer: new GlobalRiverClassificationColorLayer(),
+      options: { category: 'overlay', enabled: false },
+    },
+    {
+      layer: new LakeATLASPntColorLayer(),
+      options: { category: 'overlay', enabled: false },
+    },
+    {
+      layer: new LakeATLASPolygonColorLayer(),
+      options: { category: 'overlay', enabled: false },
+    },
+    {
+      layer: new TerrestrisLayer(),
+      options: { category: 'background', enabled: false },
+    },
+    {
+      layer: new GEBCOLayer(),
+      options: { category: 'background', enabled: true },
+    },
+    {
+      layer: 'stars',
+      options: { category: 'overlay', enabled: true },
+    },
+    {
+      layer: 'atmosphere-day-night',
+      options: { category: 'overlay', enabled: true },
+    },
+  ];
 
   const connectionStatus = {
     [ReadyState.CONNECTING]: 'Connecting',
@@ -97,8 +150,9 @@ export default function App() {
   let secondPredefinedAnswer =
     'Climate change can cause more intense and frequent rainfall in some regions, leading to severe floods, while other areas may suffer from prolonged droughts due to reduced precipitation, impacting water availability for agriculture and communities! I can show to you the difference between the rainfalls 100 years ago and now to illustrate if you want to!';
 
-  const handleChange = (event) => {
-    setChoosenLayer(event.target.value);
+  const handleChangeSelect = (event) => {
+    handleHideLayer(chosenLayer);
+    setChosenLayer(event.target.value);
   };
 
   const chatAnswerAnimation = (answerId, answer, filter = 'selector') => {
@@ -138,11 +192,15 @@ export default function App() {
   };
 
   const findIndexLayer = (layerName) => {
-    const indexLayer = globe
-      .getLayers()
-      .findIndex((layer) => layer.displayName === layerName);
+    if (globe) {
+      const indexLayer = globe
+        .getLayers()
+        .findIndex((layer) => layer.displayName === layerName);
 
-    return indexLayer;
+      return indexLayer;
+    }
+
+    return -1;
   };
 
   const handleClickSendMessage = useCallback(
@@ -230,13 +288,12 @@ export default function App() {
 
   const handleShowLayer = (layerName) => {
     const indexLayer = findIndexLayer(layerName);
-    globe.getLayers()[indexLayer].enabled = true;
+    if (indexLayer >= 0) globe.getLayers()[indexLayer].enabled = true;
   };
 
   const handleHideLayer = (layerName) => {
     const indexLayer = findIndexLayer(layerName);
-
-    globe.getLayers()[indexLayer].enabled = false;
+    if (indexLayer >= 0) globe.getLayers()[indexLayer].enabled = false;
   };
 
   useEffect(() => {
@@ -518,48 +575,9 @@ export default function App() {
     setStatus(true);
   }, [isTeacherUser]);
 
-  const layers = [
-    {
-      layer: new HydroRIVERSColorLayer(),
-      options: { category: 'overlay', enabled: false },
-    },
-    {
-      layer: new HydroLAKESPolysColorLayer(),
-      options: { category: 'overlay', enabled: false },
-    },
-    {
-      layer: new BasinATLASColorLayer(),
-      options: { category: 'overlay', enabled: false },
-    },
-    {
-      layer: new GlobalRiverClassificationColorLayer(),
-      options: { category: 'overlay', enabled: false },
-    },
-    {
-      layer: new LakeATLASPntColorLayer(),
-      options: { category: 'overlay', enabled: false },
-    },
-    {
-      layer: new LakeATLASPolygonColorLayer(),
-      options: { category: 'overlay', enabled: false },
-    },
-    {
-      layer: new TerrestrisLayer(),
-      options: { category: 'background', enabled: false },
-    },
-    {
-      layer: new GEBCOLayer(),
-      options: { category: 'background', enabled: true },
-    },
-    {
-      layer: 'stars',
-      options: { category: 'overlay', enabled: true },
-    },
-    {
-      layer: 'atmosphere-day-night',
-      options: { category: 'overlay', enabled: true },
-    },
-  ];
+  useEffect(() => {
+    handleShowLayer(chosenLayer);
+  }, [chosenLayer]);
 
   return (
     <>
@@ -938,20 +956,23 @@ export default function App() {
                     sx={{ m: 1, minWidth: 120 }}
                   >
                     <Select
-                      value={choosenLayer}
-                      onChange={handleChange}
+                      value={chosenLayer}
+                      onChange={handleChangeSelect}
                       displayEmpty
                       inputProps={{ 'aria-label': 'Without label' }}
                     >
-                      <MenuItem id='layer-selection-item' value=''>
-                        <em>Default</em>
-                      </MenuItem>
-                      <MenuItem id='layer-selection-item' value={10}>
-                        Rivers
-                      </MenuItem>
-                      <MenuItem id='layer-selection-item' value={20}>
-                        Lakes
-                      </MenuItem>
+                      $
+                      {menuLayers.length > 0
+                        ? menuLayers.map((layerMenu) => (
+                            <MenuItem
+                              key={layerMenu.value}
+                              id='layer-selection-item'
+                              value={layerMenu.value}
+                            >
+                              <em>{layerMenu.name}</em>
+                            </MenuItem>
+                          ))
+                        : ''}
                     </Select>
                     {/* <FormHelperText>Select a map layer!</FormHelperText> */}
                   </FormControl>
@@ -977,7 +998,7 @@ export default function App() {
               <div
                 className='ui-actions-box__item'
                 data-action-text='Download as CSV: upcoming feature.'
-                onClick={() => updateZoom()}
+                onClick={() => {}}
               >
                 <a className='ui-actions-box__item__link'>
                   <img src={downloadIcon} />
