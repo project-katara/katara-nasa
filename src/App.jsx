@@ -160,6 +160,7 @@ export default function App() {
       handleHideLayer('HydroRIVERS_v10');
       handleHideLayer('OSM-WMS');
       handleHideLayer('HydroLAKES_polys_v10');
+      handleShowLayer('GEBCO_LATEST');
 
       console.log(pickMap);
       removePick(pickMap);
@@ -178,6 +179,7 @@ export default function App() {
     if (answerNumber === 1) {
       handleShowLayer('HydroRIVERS_v10');
       handleShowLayer('OSM-WMS');
+      handleHideLayer('GEBCO_LATEST');
       setCoordinates({ latitude: 29.533438, longitude: 31.270695 });
       setPickMap([{ name: 'Nile', latitude: 29.533438, longitude: 31.270695 }]);
       chatAnswerAnimation('firstPredefinedAnswer', firstPredefinedAnswer);
@@ -367,6 +369,11 @@ export default function App() {
       popup.classList.remove('popup--three');
     } else if (step > 5) {
       popup.classList.add('popup--disabled');
+
+      handleHideLayer('HydroRIVERS_v10');
+      handleHideLayer('OSM-WMS');
+      handleHideLayer('HydroLAKES_polys_v10');
+      handleShowLayer('GEBCO_LATEST');
     }
   }, [step]);
 
