@@ -171,16 +171,20 @@ export default function App() {
     }
 
     if (windowWidth < 1024 && !step) {
-      setStep((current) => current + 1);
-    } else {
-      handleHideLayer('HydroRIVERS_v10');
-      handleHideLayer('OSM-WMS');
-      handleHideLayer('HydroLAKES_polys_v10');
-      handleShowLayer('GEBCO_LATEST');
-
-      removePick(pickMap);
-
       setStep(6);
+    } else {
+      if (!step) {
+        setStep((current) => current + 1);
+      } else {
+        handleHideLayer('HydroRIVERS_v10');
+        handleHideLayer('OSM-WMS');
+        handleHideLayer('HydroLAKES_polys_v10');
+        handleShowLayer('GEBCO_LATEST');
+
+        removePick(pickMap);
+
+        setStep(6);
+      }
     }
   };
 
