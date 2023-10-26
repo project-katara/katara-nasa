@@ -4,7 +4,22 @@
   padding: 0;
 }
 
+html,
 body {
+  min-height: 100vh;
+  width: 100%;
+}
+
+#root {
+  height: 100vh;
+}
+
+body,
+button,
+a,
+p,
+h1,
+h2 {
   color: #fff;
 }
 
@@ -18,6 +33,10 @@ button {
   height: 100vh;
   overflow: hidden;
   position: relative;
+}
+
+.fullscreen--hidden {
+  display: none;
 }
 
 .ui-actions-box {
@@ -424,6 +443,49 @@ button {
   width: 100%;
 }
 
+
+.modal-content__input-box {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  margin: 12px 0;
+  width: 100%;
+}
+
+.modal-content__input {
+  background: rgb(28 40 85 / 35%);
+  border: 1px solid transparent;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 6px;
+  color: #fff;
+  outline: none;
+}
+
+.modal-content__button-wrapper {
+  background: var(--popup-button-border, linear-gradient(-45deg, #4862c0 2.93%, #5e7bf0 99.67%));
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 1px;
+  margin: 0 0 0 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content__button {
+  border-radius: 5px;
+  border: 0 solid;
+  background: linear-gradient(180deg, #233371 0%, #101C4A 100%);
+  box-shadow: 2px 4px 12px 0px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  padding: 8px;
+}
+
+.modal-content__button svg {
+  fill: #b4d3ff;
+}
+
 .global-overlay {
   align-items: center;
   background: rgba(12, 24, 48, 0.76);
@@ -444,7 +506,7 @@ button {
 
 .modal-content__title {
   font-size: 50px;
-  margin: 0 0 20px;
+  margin: 0 0 10px;
 }
 
 .modal-content__description {
@@ -478,11 +540,31 @@ button {
   width: fit-content;
 }
 
+.button-wrapper--globe-state {
+  margin: 0;
+}
+
+.button-wrapper--skip-tutorial,
+.button-wrapper--globe-state {
+  position: absolute;
+  z-index: 30;
+}
+
 .button-wrapper--skip-tutorial {
+  left: 20px;
+  bottom: 20px;
+}
+
+.button-wrapper--show-globe,
+.button-wrapper--hide-globe {
+  position: relative;
+}
+
+.globe-state-box--hide-globe {
   bottom: 20px;
   left: 20px;
   position: absolute;
-  z-index: 30;
+  z-index: 40;
 }
 
 .button-wrapper__container {
@@ -623,6 +705,7 @@ a {
 
 .popup-button-wrapper__item {
   background: linear-gradient(180deg, #162355 0%, #101c4a 100%);
+  color: #fff;
   font-size: 18px;
   font-weight: 600;
   padding: 10px 20px;
@@ -697,4 +780,179 @@ a {
 .popup-number {
   font-size: 35px;
   font-weight: 600;
+}
+
+/* Hide & show map START */
+
+.map-status-box {
+  display: none;
+}
+
+.map-status-box__button {
+}
+
+/* Hide & show map END */
+
+.globe-state-box {
+  display: none;
+}
+
+.layers-control-box {
+  left: 15px;
+  position: absolute;
+  top: 10px;
+}
+
+.layer-selection-item {
+  background: linear-gradient(
+      180deg,
+      #223374 0%,
+      #17255b 21.46%,
+      #152254 34.83%,
+      #101c4a 100%
+    ),
+    #d9d9d9;
+  color: #fff;
+}
+
+.layers-control-box__form > div {
+  border-radius: 12px;
+}
+
+.layers-control-box__form > div > div:first-child,
+.layers-control-box__form > div > div:first-child:hover {
+  background: linear-gradient(
+      180deg,
+      #223374 0%,
+      #17255b 21.46%,
+      #152254 34.83%,
+      #101c4a 100%
+    ),
+    #d9d9d9;
+  border: 2px solid #3f5192;
+  border-radius: 12px;
+  color: #fff;
+}
+
+.layers-control-box__form > div > input,
+.layers-control-box__form > div > input:focus {
+  border: 1px solid #7d97f5;
+  color: #fff;
+  outline: 0;
+}
+
+.layers-control-box__form > div > svg {
+  fill: #bac1ff;
+}
+
+@media (max-width: 1024px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .global-overlay {
+    padding: 0 15px;
+  }
+
+  .logo {
+    max-width: 175px;
+  }
+
+  .globe-state-box {
+    align-items: center;
+    background-color: #0000001c;
+    border: 1px solid #739de9;
+    border-radius: 12px;
+    display: flex;
+    font-size: 16px;
+    justify-content: space-between;
+    margin: 0 0 15px;
+    max-width: 260px;
+    padding: 10px;
+    width: 100%;
+  }
+
+  .globe-state-box--hide-globe {
+    background-color: #06123133;
+    backdrop-filter: blur(1px);
+    border: 1px solid #4e6da7;
+  }
+
+  .globe-state-box p {
+    margin: 0 15px 0 0;
+  }
+
+  .globe-state-box button,
+  .globe-state-box p {
+    font-size: 16px;
+  }
+
+  /* Hide & show map START */
+
+  .map-status-box {
+    display: block;
+  }
+
+  /* Hide & show map END */
+
+  .chat-wrapper {
+    min-width: auto;
+  }
+
+  .modal-wrapper {
+    max-width: 600px;
+    min-width: auto;
+    width: 100%;
+  }
+
+  .modal-wrapper__glass {
+    padding: 1.5rem;
+  }
+
+  .modal-content__title {
+    text-align: center;
+  }
+
+  .modal-content__title {
+    font-size: 20px;
+  }
+
+  .user-type-box__item {
+    font-size: 16px;
+  }
+
+  .user-type-box__item__img {
+    max-width: 125px;
+  }
+
+  .popup-component__wrapper {
+    max-width: 300px;
+  }
+
+  .button-wrapper__container {
+    padding: 12px;
+  }
+
+  .button-container__item {
+    font-size: 18px;
+  }
+
+  .chat-input-box__item {
+    max-width: 300px;
+  }
+
+  .chat-input-box__container {
+    padding: 0 20px;
+  }
+
+  .chat-wrapper__glass {
+    height: 88%;
+  }
+
+  .fullscreen {
+    left: 0;
+    position: fixed;
+    top: 0;
+    z-index: 30;
+  }
 }
