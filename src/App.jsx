@@ -157,7 +157,11 @@ export default function App() {
     }
 
     if (windowWidth < 1024 && !step) {
-      setStep(6);
+      if (isRoom === true) {
+        setStep((current) => current + 1);
+      } else {
+        setStep(6);
+      }
     } else {
       if (!step) {
         setStep((current) => current + 1);
@@ -503,7 +507,8 @@ export default function App() {
                           features.
                         </p>
                       </div>
-                      <div
+                      {width > 1024 ? (
+                        <div
                         className="button-wrapper"
                         onClick={() => handleNextStep()}>
                         <div className="button-wrapper__container">
@@ -512,6 +517,18 @@ export default function App() {
                           </button>
                         </div>
                       </div>
+                      ) : (
+                      <div
+                        className="button-wrapper"
+                        onClick={() => {setStatus(false);handleNextStep(6)}}>
+                        <div className="button-wrapper__container">
+                          <button className="button-container__item">
+                            Start now
+                          </button>
+                        </div>
+                      </div>
+                      )}
+                      
                     </>
                   )}
                   {step == 1 && isTeacherUser === false && (
