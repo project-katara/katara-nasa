@@ -3,6 +3,8 @@ import { QueryParamProvider } from 'use-query-params';
 import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
+import 'react-toastify/dist/ReactToastify.css';
+
 import App from './App.jsx';
 import './index.css';
 

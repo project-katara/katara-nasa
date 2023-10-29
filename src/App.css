@@ -197,7 +197,7 @@ button {
 }
 .dot-flashing::before,
 .dot-flashing::after {
-  content: "";
+  content: '';
   display: inline-block;
   position: absolute;
   top: 0;
@@ -443,7 +443,6 @@ button {
   width: 100%;
 }
 
-
 .modal-content__input-box {
   align-items: center;
   display: flex;
@@ -460,10 +459,14 @@ button {
   border-radius: 6px;
   color: #fff;
   outline: none;
+  min-width: 300px;
 }
 
 .modal-content__button-wrapper {
-  background: var(--popup-button-border, linear-gradient(-45deg, #4862c0 2.93%, #5e7bf0 99.67%));
+  background: var(
+    --popup-button-border,
+    linear-gradient(-45deg, #4862c0 2.93%, #5e7bf0 99.67%)
+  );
   border-radius: 5px;
   cursor: pointer;
   padding: 1px;
@@ -476,7 +479,7 @@ button {
 .modal-content__button {
   border-radius: 5px;
   border: 0 solid;
-  background: linear-gradient(180deg, #233371 0%, #101C4A 100%);
+  background: linear-gradient(180deg, #233371 0%, #101c4a 100%);
   box-shadow: 2px 4px 12px 0px rgba(0, 0, 0, 0.25);
   cursor: pointer;
   padding: 8px;

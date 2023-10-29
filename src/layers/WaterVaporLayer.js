@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /*
  * Copyright (c) 2018 Bruce Schubert.
  * The MIT License
@@ -12,7 +13,7 @@ import "worldwindjs"; //WorldWind global
  *
  * See: https://astrowebmaps.wr.usgs.gov/webmapatlas/Layers/maps.html
  */
-export default class HydroLAKESPolysColorLayer extends WorldWind.WmsLayer {
+export default class WaterVaporLayer extends WorldWind.WmsLayer {
   /**
    * Constructs a USGS WMS layer
    * @constructor
@@ -20,15 +21,15 @@ export default class HydroLAKESPolysColorLayer extends WorldWind.WmsLayer {
    */
   constructor() {
     let cfg = {
-      title: 'HydroLAKES_polys_v10',
+      title: 'Water Vapor (1 month - Aqua/MODIS)',
       version: '1.3.0',
       service: 'https://maps.katara.earth/geoserver/ows?',
-      layerNames: 'ne:HydroLAKES_polys_v10',
+      layerNames: 'ne:MYDAL2_M_SKY_WV',
       sector: new WorldWind.Sector(-90.0, 90.0, -180, 180),
       levelZeroDelta: new WorldWind.Location(180, 180),
       numLevels: 15,
       format: 'image/png',
-      size: 128,
+      size: 256,
       coordinateSystem: 'EPSG:4326', // optional
       styleNames: '', // (optional): {String} A comma separated list of the styles to include in this layer.</li>
     };

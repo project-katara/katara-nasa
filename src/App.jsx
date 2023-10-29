@@ -8,6 +8,7 @@
 
 import 'worldwindjs';
 import { v4 as uuidv4 } from 'uuid';
+import { ToastContainer, toast } from 'react-toastify';
 import MenuItem from '@mui/material/MenuItem';
 import FormHelperText from '@mui/material/FormHelperText';
 import FormControl from '@mui/material/FormControl';
@@ -35,12 +36,14 @@ const WorldWind = window.WorldWind;
 
 import HydroRIVERSColorLayer from './layers/HydroRIVERSColorLayer';
 import HydroLAKESPolysColorLayer from './layers/HydroLAKESPolysColorLayer';
-import BasinATLASColorLayer from './layers/BasinATLASColorLayer';
+import HydroLAKESPointsColorLayer from './layers/HydroLAKESPointsColorLayer';
 import GlobalRiverClassificationColorLayer from './layers/GlobalRiverClassificationColorLayer';
-import LakeATLASPntColorLayer from './layers/LakeATLASPointColorLayer';
-import LakeATLASPolygonColorLayer from './layers/LakeATLASPolygonColorLayer';
 import TerrestrisLayer from './layers/TerrestrisLayer';
 import GEBCOLayer from './layers/GEBCOLayer';
+import NeoNasaWaterVaporLayer from './layers/NeoNasaWaterVaporLayer';
+import WaterSanitationLayer from './layers/WaterSanitationLayer';
+import WaterVaporLayer from './layers/WaterVaporLayer';
+import PopulationDensityLayer from './layers/PopulationDensityLayer';
 
 import useWindowDimensions from './hooks/useWindowDimensions';
 
@@ -63,16 +66,6 @@ export default function App() {
 
   const [isTeacherUser, setIsTeacherUser] = useState(false);
   const [pickMap, setPickMap] = useState([]); // { name: 'nilo', latitude: 34.2, longitude: -119.2},
-  const [menuLayers, setMenuLayers] = useState([
-    // { name: 'Basin', value: 'BasinATLAS_v10' },
-    { name: 'GEBCO', value: 'GEBCO_LATEST' },
-    { name: 'Gloric', value: 'GloRiC_v10' },
-    { name: 'Lakes', value: 'HydroLAKES_polys_v10' },
-    { name: 'Rivers', value: 'HydroRIVERS_v10' },
-    // { name: 'LAKE Point', value: 'LakeATLAS_v10_pnt' },
-    // { name: 'LAKE Polygon', value: 'LakeATLAS_v10_pol' },
-    { name: 'OMS', value: 'OSM-WMS' },
-  ]);
 
   const [coordinates, setCoordinates] = useState({
     latitude: 34.2,
@@ -84,11 +77,30 @@ export default function App() {
     StringParam
   );
 
-  const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl);
-
+  const didUnmount = useRef(false);
   const globeRef = useRef();
 
+  const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl, {
+    shouldReconnect: (closeEvent) => {
+      return didUnmount.current === false;
+    },
+    reconnectAttempts: 10,
+    reconnectInterval: 3000,
+  });
+
   const layers = [
+    {
+      layer: new PopulationDensityLayer(),
+      options: { category: 'background', enabled: false },
+    },
+    {
+      layer: new WaterVaporLayer(),
+      options: { category: 'background', enabled: false },
+    },
+    {
+      layer: new NeoNasaWaterVaporLayer(),
+      options: { category: 'overlay', enabled: false },
+    },
     {
       layer: new HydroRIVERSColorLayer(),
       options: { category: 'overlay', enabled: false },
@@ -98,7 +110,7 @@ export default function App() {
       options: { category: 'overlay', enabled: false },
     },
     {
-      layer: new BasinATLASColorLayer(),
+      layer: new HydroLAKESPointsColorLayer(),
       options: { category: 'overlay', enabled: false },
     },
     {
@@ -106,11 +118,7 @@ export default function App() {
       options: { category: 'overlay', enabled: false },
     },
     {
-      layer: new LakeATLASPntColorLayer(),
-      options: { category: 'overlay', enabled: false },
-    },
-    {
-      layer: new LakeATLASPolygonColorLayer(),
+      layer: new WaterSanitationLayer(),
       options: { category: 'overlay', enabled: false },
     },
     {
@@ -128,6 +136,37 @@ export default function App() {
     {
       layer: 'atmosphere-day-night',
       options: { category: 'overlay', enabled: true },
+    },
+  ];
+
+  const menuLayers = [
+    { name: 'Default', value: 'GEBCO_LATEST' },
+    { name: 'OMS', value: 'OSM-WMS' },
+    {
+      name: 'Population Density',
+      value: 'Population Density',
+    },
+    {
+      name: 'Water Vapor',
+      value: 'Water Vapor (1 month - Aqua/MODIS)',
+    },
+    {
+      name: 'Water and Sanitation [EPI]',
+      value:
+        'EPI 2020_Environmental Health Objective - Sanitation and Drinking Water',
+      background: 'GEBCO_LATEST',
+    },
+    { name: 'Gloric', value: 'GloRiC_v10', background: 'GEBCO_LATEST' },
+    { name: 'Rivers', value: 'HydroRIVERS_v10', background: 'OSM-WMS' },
+    {
+      name: 'LAKE Point',
+      value: 'HydroLAKES_points_v10',
+      background: 'OSM-WMS',
+    },
+    {
+      name: 'LAKE Polygon',
+      value: 'HydroLAKES_polys_v10',
+      background: 'OSM-WMS',
     },
   ];
 
@@ -150,15 +189,15 @@ export default function App() {
   let secondPredefinedAnswer =
     'Climate change can cause more intense and frequent rainfall in some regions, leading to severe floods, while other areas may suffer from prolonged droughts due to reduced precipitation, impacting water availability for agriculture and communities! I can show to you the difference between the rainfalls 100 years ago and now to illustrate if you want to!';
 
-  const handleChangeSelect = (event) => {
-    handleHideLayer(chosenLayer);
-    setChosenLayer(event.target.value);
-  };
-
   const chatAnswerAnimation = (answerId, answer, filter = 'selector') => {
     if (answer === '' || answer === undefined) return;
 
-    const addBreakLineAnswer = answer.replace(/\n/gi, '\n\n');
+    let addBreakLineAnswer = '';
+    if (answer.includes('1.')) {
+      addBreakLineAnswer = answer.replace(/[\n]/gi, '\n\n');
+    } else {
+      addBreakLineAnswer = answer.replace(/[\n]/gi, '\n');
+    }
 
     let answerIdTemp =
       filter === 'selector'
@@ -179,12 +218,24 @@ export default function App() {
     }, 40);
   };
 
-  const updateZoom = () => {
+  const updateZoomIn = () => {
     const globeWWD = globeRef.current;
 
     var wwd = globeWWD.wwd;
 
     wwd.keyboardControls.handleZoom('zoomIn');
+
+    setTimeout(() => {
+      wwd.keyboardControls.activeOperation = null;
+    }, 2000);
+  };
+
+  const updateZoomOut = () => {
+    const globeWWD = globeRef.current;
+
+    var wwd = globeWWD.wwd;
+
+    wwd.keyboardControls.handleZoom('zoomOut');
 
     setTimeout(() => {
       wwd.keyboardControls.activeOperation = null;
@@ -201,6 +252,31 @@ export default function App() {
     }
 
     return -1;
+  };
+
+  const handleKeyDownInputChat = (e) => {
+    if (e.key === 'Enter') {
+      handleOnSubmit();
+    }
+  };
+
+  const handleChangeSelect = (event) => {
+    const { value, background } = menuLayers.find(
+      (layer) => layer.value === chosenLayer
+    );
+
+    console.log(value, background);
+
+    if (background) handleHideLayer(background);
+
+    handleHideLayer(value);
+
+    setChosenLayer(event.target.value);
+  };
+
+  const handleClickCopyPast = () => {
+    navigator.clipboard.writeText(window.location.href);
+    toast('🚀 Copied!');
   };
 
   const handleClickSendMessage = useCallback(
@@ -296,39 +372,6 @@ export default function App() {
     if (indexLayer >= 0) globe.getLayers()[indexLayer].enabled = false;
   };
 
-  useEffect(() => {
-    if (questions.length === 0) return;
-
-    // const waitAnswer = questions.findIndex(
-    //   (question) => question.answer === ' '
-    // );
-
-    if (waitResponse === true) {
-      localStorage.setItem('questions', JSON.stringify(questions));
-
-      const questionLength = questions.length - 1;
-      const question = questions[questionLength];
-      setAnswerId(question.id);
-      chatAnswerAnimation(question.id, '', 'id');
-    } else {
-      if (lastMessage) {
-        try {
-          const message = JSON.parse(lastMessage.data);
-          if (message['Answer'] !== undefined && message['Answer'] !== '') {
-            localStorage.setItem('questions', JSON.stringify(questions));
-
-            const questionLength = questions.length - 1;
-            const question = questions[questionLength];
-            chatAnswerAnimation(question.id, message.Answer, 'id');
-            setAnswerId(question.id);
-          }
-        } catch (error) {
-          console.log('error', error);
-        }
-      }
-    }
-  }, [questions]);
-
   const removePick = (layersPick) => {
     const globeWWD = globeRef.current;
     const wwd = globeWWD.wwd;
@@ -409,6 +452,39 @@ export default function App() {
 
     wwd.addLayer(placemarkLayer);
   };
+
+  useEffect(() => {
+    if (questions.length === 0) return;
+
+    // const waitAnswer = questions.findIndex(
+    //   (question) => question.answer === ' '
+    // );
+
+    if (waitResponse === true) {
+      localStorage.setItem('questions', JSON.stringify(questions));
+
+      const questionLength = questions.length - 1;
+      const question = questions[questionLength];
+      setAnswerId(question.id);
+      chatAnswerAnimation(question.id, '', 'id');
+    } else {
+      if (lastMessage) {
+        try {
+          const message = JSON.parse(lastMessage.data);
+          if (message['Answer'] !== undefined && message['Answer'] !== '') {
+            localStorage.setItem('questions', JSON.stringify(questions));
+
+            const questionLength = questions.length - 1;
+            const question = questions[questionLength];
+            chatAnswerAnimation(question.id, message.Answer, 'id');
+            setAnswerId(question.id);
+          }
+        } catch (error) {
+          console.log('error', error);
+        }
+      }
+    }
+  }, [questions]);
 
   useEffect(() => {
     if (pickMap.length > 0) {
@@ -559,6 +635,28 @@ export default function App() {
   }, [lastMessage]);
 
   useEffect(() => {
+    setStatus(true);
+  }, [isTeacherUser]);
+
+  useEffect(() => {
+    const { value, background } = menuLayers.find(
+      (layer) => layer.value === chosenLayer
+    );
+
+    const globeWWD = globeRef.current;
+
+    if (globeWWD) {
+      handleShowLayer(value);
+      if (background) handleShowLayer(background);
+      globeWWD.wwd.redraw();
+    }
+  }, [chosenLayer]);
+
+  useEffect(() => {
+    // console.log(connectionStatus);
+  }, [readyState]);
+
+  useEffect(() => {
     if (roomIdQueryParams !== '' && roomIdQueryParams !== undefined) {
       setSocketUrl(
         `${config.websocket.host}/${roomIdQueryParams}/${uuidv4().replace(
@@ -570,14 +668,6 @@ export default function App() {
       setStep(1);
     }
   }, []);
-
-  useEffect(() => {
-    setStatus(true);
-  }, [isTeacherUser]);
-
-  useEffect(() => {
-    handleShowLayer(chosenLayer);
-  }, [chosenLayer]);
 
   return (
     <>
@@ -626,7 +716,7 @@ export default function App() {
                     <>
                       <div className='modal-content__header'>
                         <h2 className='modal-content__title'>
-                          You are now in a class room!
+                          You are now in a classroom!
                         </h2>
                         <p className='modal-content__description'>
                           You can share the link of this page to your students
@@ -635,9 +725,15 @@ export default function App() {
                           answers.
                         </p>
                         <div className='modal-content__input-box'>
-                          <input className='modal-content__input' />
+                          <input
+                            className='modal-content__input'
+                            value={window.location.href}
+                          />
                           <div className='modal-content__button-wrapper'>
-                            <button className='modal-content__button'>
+                            <button
+                              className='modal-content__button'
+                              onClick={() => handleClickCopyPast()}
+                            >
                               <svg
                                 width='24'
                                 height='24'
@@ -702,9 +798,7 @@ export default function App() {
                         <div className='button-wrapper__container'>
                           <button className='button-container__item'>
                             {`${
-                              width > 1024
-                                ? 'Follow tutorial'
-                                : 'Explorer of the globe'
+                              width > 1024 ? 'Follow tutorial' : 'Start Now'
                             }`}
                           </button>
                         </div>
@@ -919,6 +1013,7 @@ export default function App() {
                   <div className='chat-input-box__container'>
                     <input
                       value={chatInput}
+                      onKeyDown={(e) => handleKeyDownInputChat(e)}
                       placeholder={
                         step >= 6
                           ? 'Ask Katara...'
@@ -1036,11 +1131,12 @@ export default function App() {
               layers={layers}
               latitude={coordinates.latitude}
               longitude={coordinates.longitude}
-              // altitude={10e6}
+              altitude={10e6}
             />
           </div>
         </div>
       </div>
+      <ToastContainer />
     </>
   );
 }

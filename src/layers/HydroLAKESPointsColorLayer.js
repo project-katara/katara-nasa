@@ -12,7 +12,7 @@ import "worldwindjs"; //WorldWind global
  *
  * See: https://astrowebmaps.wr.usgs.gov/webmapatlas/Layers/maps.html
  */
-export default class HydroLAKESPolysColorLayer extends WorldWind.WmsLayer {
+export default class HydroLAKESPointsColorLayer extends WorldWind.WmsLayer {
   /**
    * Constructs a USGS WMS layer
    * @constructor
@@ -20,10 +20,10 @@ export default class HydroLAKESPolysColorLayer extends WorldWind.WmsLayer {
    */
   constructor() {
     let cfg = {
-      title: 'HydroLAKES_polys_v10',
+      title: 'HydroLAKES_points_v10',
       version: '1.3.0',
       service: 'https://maps.katara.earth/geoserver/ows?',
-      layerNames: 'ne:HydroLAKES_polys_v10',
+      layerNames: 'ne:HydroLAKES_points_v10',
       sector: new WorldWind.Sector(-90.0, 90.0, -180, 180),
       levelZeroDelta: new WorldWind.Location(180, 180),
       numLevels: 15,

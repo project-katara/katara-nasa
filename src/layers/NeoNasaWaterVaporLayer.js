@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /*
  * Copyright (c) 2018 Bruce Schubert.
  * The MIT License
@@ -12,7 +13,7 @@ import "worldwindjs"; //WorldWind global
  *
  * See: https://astrowebmaps.wr.usgs.gov/webmapatlas/Layers/maps.html
  */
-export default class HydroLAKESPolysColorLayer extends WorldWind.WmsLayer {
+export default class NeoNasaWaterVaporLayer extends WorldWind.WmsLayer {
   /**
    * Constructs a USGS WMS layer
    * @constructor
@@ -20,16 +21,16 @@ export default class HydroLAKESPolysColorLayer extends WorldWind.WmsLayer {
    */
   constructor() {
     let cfg = {
-      title: 'HydroLAKES_polys_v10',
+      title: 'Water Vapor (46 hPa, Day, MLS, Aura)',
       version: '1.3.0',
-      service: 'https://maps.katara.earth/geoserver/ows?',
-      layerNames: 'ne:HydroLAKES_polys_v10',
+      service: 'https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?',
+      layerNames: 'MLS_H2O_46hPa_Day',
       sector: new WorldWind.Sector(-90.0, 90.0, -180, 180),
       levelZeroDelta: new WorldWind.Location(180, 180),
       numLevels: 15,
       format: 'image/png',
-      size: 128,
-      coordinateSystem: 'EPSG:4326', // optional
+      size: 256,
+      // coordinateSystem: 'EPSG:4326', // optional
       styleNames: '', // (optional): {String} A comma separated list of the styles to include in this layer.</li>
     };
     super(cfg);
@@ -40,3 +41,13 @@ export default class HydroLAKESPolysColorLayer extends WorldWind.WmsLayer {
     this.urlBuilder.transparent = true;
   }
 }
+
+
+// Sea Surface Temperature (L3, Night, Annual, Mid Infrared, 4 km)
+// MODIS_Aqua_L3_SST_MidIR_4km_Night_Annual
+
+//https://nasa-gibs.github.io/gibs-api-docs/available-visualizations/#visualization-product-catalog
+
+//https://sedac.ciesin.columbia.edu/data/set/gpw-v4-land-water-area-rev11/maps/services#
+
+//https://sedac.ciesin.columbia.edu/mapping/viewer/#
