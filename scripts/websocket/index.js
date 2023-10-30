@@ -1,38 +1,54 @@
-import WebSocket, { WebSocketServer } from 'ws';
-import redis from 'redis';
+import { createServer } from 'https';
+import { readFileSync } from 'fs';
 
-const client = redis.createClient();
+const server = createServer({
+  cert: readFileSync('/etc/letsencrypt/live/katara.earth/fullchain.pem'),
+  key: readFileSync('/etc/letsencrypt/live/katara.earth/privkey.pem'),
+});
 
-const wss = new WebSocketServer({ port: 8080 });
+import { WebSocketServer } from 'ws';
+import axios from 'axios';
+import { publish, subscribe, broadcast } from './queue.js';
 
-const convertBufferToJsonMessage = (data) => {
-  const messageData = data.toString('utf-8');
-  const messageJson = JSON.parse(messageData);
+const API_URL = 'https://dkdaniz-katara.hf.space/api/predict';
 
-  return messageJson;
-};
+const wss = new WebSocketServer(server);
 
+wss.on('connection', function connection(ws, req) {
+  let paths = req.url.split('/').slice(1);
+  let isClassRoom = paths.length === 2;
 
-const broadcast = (wss, ws, roomId, message) => {
-    wss.clients.forEach(function each(client) {
-        if (client.roomId === roomId) {
-            ws.send(JSON.stringify(message));
-        }
-    });
-}
+  if (isClassRoom) {
+    const [roomId, clientId] = paths;
+    ws.roomId = roomId;
+    ws.clientId = clientId;
 
-wss.on('connection', function connection(ws) {
+    subscribe(ws.roomId, ws, broadcast);
+  }
+
   ws.on('error', console.error);
 
-  ws.on('message', function message(data) {
-    const { path, roomId, clientId, prompt } = convertBufferToJsonMessage(data);   
+  ws.on('message', async function message(data) {
+    const prompt = data.toString('utf-8');
 
-    if (path === 'classroom') {
-        ws.roomId = roomId;
-        ws.clientId = clientId;
-
-        broadcast(wss, ws, roomId, prompt);
+    if (isClassRoom) {
+      axios
+        .post(API_URL, { prompt: prompt })
+        .then(function (res) {
+          publish(ws.roomId, JSON.stringify(res.data.response));
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    } else {
+      axios
+        .post(API_URL, { prompt: prompt })
+        .then(function (res) {
+          ws.send(JSON.stringify(res.data.response));
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     }
-    
   });
 });
