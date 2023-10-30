@@ -12,7 +12,7 @@ import { publish, subscribe, broadcast } from './queue.js';
 
 const API_URL = 'https://dkdaniz-katara.hf.space/api/predict';
 
-const wss = new WebSocketServer(server);
+const wss = new WebSocketServer({server});
 
 wss.on('connection', function connection(ws, req) {
   let paths = req.url.split('/').slice(1);
