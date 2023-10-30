@@ -1,5 +1,5 @@
 export const config = {
   websocket: {
-    host: 'wss:dkdaniz-katara.hf.space/api/ws',
+    host: 'wss:katara.earth:3333',
   },
 };
