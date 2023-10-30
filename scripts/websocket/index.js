@@ -25,34 +25,25 @@ wss.on('connection', function connection(ws, req) {
     const [roomId, clientId] = paths;
     ws.roomId = roomId;
     ws.clientId = clientId;
-
-    subscribe(ws.roomId, ws, broadcast);
+  }else{
+    ws.roomId = paths[0];
   }
+
+  subscribe(ws.roomId, ws, broadcast);
 
   ws.on('error', console.error);
 
   ws.on('message', async function message(data) {
     const prompt = data.toString('utf-8');
 
-    if (isClassRoom) {
-      axios
-        .post(API_URL, { prompt: prompt })
-        .then(function (res) {
-          publish(ws.roomId, JSON.stringify(res.data.response));
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    } else {
-      axios
-        .post(API_URL, { prompt: prompt })
-        .then(function (res) {
-          ws.send(JSON.stringify(res.data.response));
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    }
+    axios
+      .post(API_URL, { prompt: prompt })
+      .then(function (res) {
+        publish(ws.roomId, JSON.stringify(res.data.response));
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   });
 });
 
