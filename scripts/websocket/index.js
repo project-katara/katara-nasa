@@ -2,8 +2,11 @@ import { createServer } from 'https';
 import { readFileSync } from 'fs';
 
 const server = createServer({
-  cert: readFileSync('/etc/letsencrypt/live/katara.earth/fullchain.pem'),
-  key: readFileSync('/etc/letsencrypt/live/katara.earth/privkey.pem'),
+  cert: readFileSync(
+    '/etc/letsencrypt/live/katara.earth/fullchain.pem',
+    'utf8'
+  ),
+  key: readFileSync('/etc/letsencrypt/live/katara.earth/privkey.pem', 'utf8'),
 });
 
 import { WebSocketServer } from 'ws';
@@ -52,3 +55,5 @@ wss.on('connection', function connection(ws, req) {
     }
   });
 });
+
+server.listen(3333);
