@@ -197,7 +197,7 @@ button {
 }
 .dot-flashing::before,
 .dot-flashing::after {
-  content: "";
+  content: '';
   display: inline-block;
   position: absolute;
   top: 0;
@@ -564,8 +564,8 @@ button {
 }
 
 .globe-state-box--hide-globe {
-  bottom: 20px;
-  left: 20px;
+  bottom: 100px;
+  left: 60px;
   position: absolute;
   z-index: 40;
 }
