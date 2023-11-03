@@ -42,7 +42,15 @@ wss.on('connection', function connection(ws, req) {
         publish(ws.roomId, JSON.stringify(res.data.response));
       })
       .catch(function (error) {
-        console.log(error);
+        publish(
+          ws.roomId,
+          JSON.stringify({
+            Prompt: prompt,
+            Answer:
+              'We are preparing the environment, you can follow the status at the following link: https://huggingface.co/spaces/dkdaniz/katara',
+            Sources: " "
+          })
+        );
       });
   });
 });

@@ -299,10 +299,14 @@ export default function App() {
     }
   };
 
+  const queryParamsRoom = () => {
+    const roomId = socketUrl.replace(`${config.websocket.host}/`, '');
+    setRoomIdQueryParams(roomId);
+  };
+
   const handleNextStep = (step, isRoom) => {
     if (isRoom === true) {
-      const roomId = socketUrl.replace(`${config.websocket.host}/`, '');
-      setRoomIdQueryParams(roomId);
+      queryParamsRoom();
     }
 
     if (width < 1024 && !step) {
@@ -514,6 +518,8 @@ export default function App() {
   }, [globeRef]);
 
   useEffect(() => {
+    console.log(step);
+
     if (step === 2 || step === 6) {
       setStatus(false);
     }
@@ -704,7 +710,12 @@ export default function App() {
                             src={teacher}
                             className='user-type-box__item__img'
                             onClick={() => {
-                              handleNextStep('', true);
+                              if (width < 1024 && step === 0) {
+                                setStep(1);
+                                queryParamsRoom();
+                              } else {
+                                handleNextStep('', true);
+                              }
                               setIsTeacherUser(true);
                             }}
                           />
@@ -728,6 +739,7 @@ export default function App() {
                           <input
                             className='modal-content__input'
                             value={window.location.href}
+                            readOnly={true}
                           />
                           <div className='modal-content__button-wrapper'>
                             <button
@@ -757,7 +769,9 @@ export default function App() {
                           </div>
                         </div>
                         <p className='modal-content__description'>
-                          Now we'll guide you through all Katara's features.
+                          {width < 1024
+                            ? "Now you can use all of Katara's features."
+                            : "Now we'll guide you through all Katara's features."}
                         </p>
                       </div>
                       <div
@@ -766,7 +780,7 @@ export default function App() {
                       >
                         <div className='button-wrapper__container'>
                           <button className='button-container__item'>
-                            Follow tutorial
+                            {width < 1024 ? 'Start Now' : 'Follow tutorial'}
                           </button>
                         </div>
                       </div>
@@ -1052,7 +1066,7 @@ export default function App() {
                   >
                     <Select
                       value={chosenLayer}
-                      onChange={handleChangeSelect}
+                      onChange={(e) => handleChangeSelect(e)}
                       displayEmpty
                       inputProps={{ 'aria-label': 'Without label' }}
                     >
