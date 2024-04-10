@@ -51,7 +51,7 @@ All of the sources that helped building the project, such as datasets, documents
 - [Accelerated sea ice loss in the Wandel Sea points to a change in the Arctic’s Last Ice Area](https://www.nature.com/articles/s43247-021-00197-5)
 - [Arctic Report Card](https://arctic.noaa.gov/Report-card/)
 - [Arctic Sea Ice 6th Lowest on Record; Antarctic Sees Record Low Grow...](https://climate.nasa.gov/news/3284/arctic-sea-ice-6th-lowest-on-record-antarctic-sees-record-low-growth/)
-- [Arctic Sea Ice Minimum | NASA Global Climate Chang](https://climate.nasa.gov/vital-signs/arctic-sea-ice/)
+- [Arctic Sea Ice Minimum | NASA Global Climate Change](https://climate.nasa.gov/vital-signs/arctic-sea-ice/)
 - [Carbon Dioxide Concentration](https://climate.nasa.gov/vital-signs/carbon-dioxide/)
 - [Climate Change Evidence: How Do We Know?](https://climate.nasa.gov/evidence/)
 - [Earth Observing Dashboard](https://eodashboard.org/explore)
