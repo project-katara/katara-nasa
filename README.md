@@ -3,7 +3,7 @@
 </div>
 
 # Project Katara - Global Finalist Honorable Mention 
-#(NASA Space Apps 2023)
+# (NASA Space Apps 2023)
 Katara is a free web application that uses NASA's satellites data for giving to users a better understandment of the path of water across the entire Earth system and how the availability of this critical resource is affected by our changing climate through an interactive application. 
 
 [![Project Katara](https://img.youtube.com/vi/rtFM8AYH_T0/maxresdefault.jpg)](https://www.youtube.com/watch?v=rtFM8AYH_T0 "Project Katara - Full Demonstration")
