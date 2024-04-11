@@ -16,7 +16,7 @@ The Web App Katara's interactive experience is based on a Language Model and an 
 
 - [GeoServer](https://github.com/project-katara/geoserver) - the open source software GeoServer was used for building the layers of the 3D globe.
 
-- [LLaMA 2](https://huggingface.co/docs/transformers/main/model_doc/llama2) - LLaMA 2 pretrained model, with average 7 billion parameters as a base, was used for building Katara LLM, however it was fine-tuned using NASA datasets and documents to answer Earth's water related questions.
+- [LLaMA 2](https://huggingface.co/docs/transformers/main/model_doc/llama2) - LLaMA 2 pretrained model, with average 7 billion parameters as a base, was used for building Katara LLM, it was fine-tuned using NASA datasets and documents to answer Earth's water related questions.
 
 - [Katara](https://huggingface.co/spaces/dkdaniz/katara) - here you can try Katara LLM chat
   
